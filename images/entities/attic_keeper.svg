@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 700">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#14141d"/>
+      <stop offset="100%" stop-color="#0b0c12"/>
+    </linearGradient>
+    <radialGradient id="dust" cx="50%" cy="28%" r="50%">
+      <stop offset="0%" stop-color="#fff0d0" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#fff0d0" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="500" height="700" fill="url(#bg)"/>
+  <circle cx="250" cy="190" r="135" fill="url(#dust)"/>
+  <ellipse cx="250" cy="628" rx="170" ry="26" fill="#000" opacity="0.34"/>
+  <path d="M160 550c6-72 9-188 56-262 20-32 34-48 45-48 16 0 31 17 48 48 43 79 47 189 50 262-45 31-158 31-199 0z" fill="#1c1f2a"/>
+  <circle cx="250" cy="210" r="46" fill="#1c1f2a"/>
+  <circle cx="236" cy="208" r="5" fill="#ffe4a8" opacity="0.85"/>
+  <circle cx="264" cy="208" r="5" fill="#ffe4a8" opacity="0.85"/>
+  <path d="M205 320l45 22 43-22-43-24z" fill="#fff8e6" opacity="0.9"/>
+  <path d="M205 320l45 22 0 32-45-54zm88 0l-43 22 0 32 43-54z" fill="#e7dfc4" opacity="0.9"/>
+</svg>

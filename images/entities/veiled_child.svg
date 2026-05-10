@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 700">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#11182c"/>
+      <stop offset="100%" stop-color="#060912"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="30%" r="50%">
+      <stop offset="0%" stop-color="#d9ffff" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#d9ffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="veil" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f9fcff" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#bfcaff" stop-opacity="0.1"/>
+    </linearGradient>
+  </defs>
+  <rect width="500" height="700" fill="url(#bg)"/>
+  <ellipse cx="250" cy="620" rx="150" ry="28" fill="#000" opacity="0.35"/>
+  <circle cx="250" cy="200" r="120" fill="url(#glow)"/>
+  <path d="M250 140c-38 0-68 34-68 76 0 22 7 40 17 55-31 33-75 112-95 228h292c-18-108-55-191-91-227 10-15 17-34 17-56 0-42-30-76-72-76z" fill="#0c1020" opacity="0.92"/>
+  <path d="M188 230c8-44 32-84 61-84 32 0 55 38 65 84 8 37 32 69 48 97-28 24-72 42-114 42-47 0-90-17-112-42 18-26 44-62 52-97z" fill="url(#veil)" opacity="0.9"/>
+  <circle cx="228" cy="248" r="5" fill="#dff7ff" opacity="0.85"/>
+  <circle cx="272" cy="248" r="5" fill="#dff7ff" opacity="0.85"/>
+  <path d="M220 280q30 15 60 0" fill="none" stroke="#dff7ff" stroke-opacity="0.6" stroke-width="3" stroke-linecap="round"/>
+</svg>

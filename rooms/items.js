@@ -200,6 +200,85 @@ window.ITEMS = {
     type: "consumable",
     sanity: 18,
     heal: 0
+  },
+
+  /* ---------- COOKING INGREDIENTS ---------- */
+  "Wild Mushroom": {
+    id: "wild_mushroom",
+    name: "Wild Mushroom",
+    icon: "../images/items/wild_mushroom.svg",
+    color: "#8fd16a",
+    description: "A pale mushroom from the damp trail. Cook it before eating.",
+    stack: 12
+  },
+
+  "Canned Beans": {
+    id: "canned_beans",
+    name: "Canned Beans",
+    icon: "../images/items/canned_beans.svg",
+    color: "#d48a35",
+    description: "Cold, sealed beans. Better warmed over a flame.",
+    stack: 6
+  },
+
+  "Stale Bread": {
+    id: "stale_bread",
+    name: "Stale Bread",
+    icon: "../images/items/stale_bread.svg",
+    color: "#caa46a",
+    description: "Hard bread. Not good, but food is food.",
+    stack: 8,
+    type: "consumable",
+    sanity: 4,
+    heal: 0
+  },
+
+  "Cooked Mushrooms": {
+    id: "cooked_mushrooms",
+    name: "Cooked Mushrooms",
+    icon: "../images/items/cooked_mushrooms.svg",
+    color: "#b6e37f",
+    description: "Warm mushrooms. Earthy, safe, and grounding.",
+    stack: 6,
+    type: "consumable",
+    sanity: 8,
+    heal: 0
+  },
+
+  "Warm Beans": {
+    id: "warm_beans",
+    name: "Warm Beans",
+    icon: "../images/items/warm_beans.svg",
+    color: "#e09844",
+    description: "A warm can of beans. Small comfort in an awful place.",
+    stack: 4,
+    type: "consumable",
+    sanity: 12,
+    heal: 0
+  },
+
+  "Herbal Broth": {
+    id: "herbal_broth",
+    name: "Herbal Broth",
+    icon: "../images/items/herbal_broth.svg",
+    color: "#83d6c4",
+    description: "Hot water, lavender, and something like peace.",
+    stack: 4,
+    type: "consumable",
+    sanity: 16,
+    heal: 0
+  },
+
+  "Campfire Stew": {
+    id: "campfire_stew",
+    name: "Campfire Stew",
+    icon: "../images/items/campfire_stew.svg",
+    color: "#ffb15c",
+    description: "A full cooked meal. The house feels farther away for a minute.",
+    stack: 3,
+    type: "consumable",
+    sanity: 25,
+    heal: 0
   }
 };
 

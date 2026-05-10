@@ -1,9 +1,12 @@
 /* =====================================================
-   CRAFTING RECIPES (ID ONLY)
+   CRAFTING + COOKING RECIPES (ID ONLY)
+   station: "crafting" or "cooking"
+   consume: false means the ingredient is a reusable tool.
    ===================================================== */
 
 window.RECIPES = [
   {
+    station: "crafting",
     category: "Keys",
     output: { id: "silver_key", amount: 1 },
     ingredients: [
@@ -12,6 +15,7 @@ window.RECIPES = [
     ]
   },
   {
+    station: "crafting",
     category: "Tools",
     output: { id: "key_mold", amount: 1 },
     ingredients: [
@@ -21,6 +25,7 @@ window.RECIPES = [
     ]
   },
   {
+    station: "crafting",
     category: "Sanity",
     output: { id: "lavender_tea", amount: 1 },
     ingredients: [
@@ -29,6 +34,7 @@ window.RECIPES = [
     ]
   },
   {
+    station: "crafting",
     category: "Sanity",
     output: { id: "comfort_candle", amount: 1 },
     ingredients: [
@@ -37,11 +43,51 @@ window.RECIPES = [
     ]
   },
   {
+    station: "crafting",
     category: "Sanity",
     output: { id: "sleep_sachet", amount: 1 },
     ingredients: [
       { id: "cloth", amount: 1 },
       { id: "lavender", amount: 2 }
+    ]
+  },
+  {
+    station: "cooking",
+    category: "Cooking",
+    output: { id: "cooked_mushrooms", amount: 1 },
+    ingredients: [
+      { id: "wild_mushroom", amount: 1 },
+      { id: "lighter", amount: 1, consume: false }
+    ]
+  },
+  {
+    station: "cooking",
+    category: "Cooking",
+    output: { id: "warm_beans", amount: 1 },
+    ingredients: [
+      { id: "canned_beans", amount: 1 },
+      { id: "lighter", amount: 1, consume: false }
+    ]
+  },
+  {
+    station: "cooking",
+    category: "Cooking",
+    output: { id: "herbal_broth", amount: 1 },
+    ingredients: [
+      { id: "water", amount: 1 },
+      { id: "lavender", amount: 1 },
+      { id: "lighter", amount: 1, consume: false }
+    ]
+  },
+  {
+    station: "cooking",
+    category: "Cooking",
+    output: { id: "campfire_stew", amount: 1 },
+    ingredients: [
+      { id: "canned_beans", amount: 1 },
+      { id: "wild_mushroom", amount: 1 },
+      { id: "water", amount: 1 },
+      { id: "lighter", amount: 1, consume: false }
     ]
   }
 ];

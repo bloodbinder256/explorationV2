@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Endless Requium — Ending</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+
+<body class="fade-in ending-page" data-sanity="high">
+  <div class="vignette"></div>
+  <div class="scanlines"></div>
+  <div class="grain"></div>
+
+  <main class="ending-card">
+    <div class="eyebrow">The House Answers</div>
+    <h1 id="endingTitle">Ending</h1>
+    <p id="endingText">Calculating ending...</p>
+    <div id="endingNote" class="ending-note"></div>
+
+    <div class="ending-actions">
+      <button class="btn" onclick="location.href='../index.html'">Title Screen</button>
+      <button class="btn danger" onclick="if(confirm('Start a new run?')) { localStorage.clear(); location.href='lore.html'; }">New Run</button>
+    </div>
+  </main>
+
+  <script src="../rooms/items.js"></script>
+  <script src="../rooms/inventory.js"></script>
+  <script src="../rooms/sanity.js"></script>
+  <script src="../rooms/content_config.js"></script>
+
+  <script>
+    const CONTENT_FLAGS_KEY = "content_flags_v1";
+    const PROGRESS_KEY = "gameProgress_v1";
+
+    function readJSON(key, fallback) {
+      try { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); }
+      catch (_) { return fallback; }
+    }
+
+    function getFlags() {
+      return {
+        ...readJSON(PROGRESS_KEY, {}),
+        ...readJSON(CONTENT_FLAGS_KEY, {})
+      };
+    }
+
+    function hasAll(flags, list = []) {
+      return list.every(flag => !!flags[flag]);
+    }
+
+    function hasAny(flags, list = []) {
+      return list.length === 0 || list.some(flag => !!flags[flag]);
+    }
+
+    function hasNone(flags, list = []) {
+      return list.every(flag => !flags[flag]);
+    }
+
+    function hasItems(items = []) {
+      if (!items.length) return true;
+      if (!window.Inventory) return false;
+      Inventory.load();
+      return items.every(id => Inventory.has(id));
+    }
+
+    function pickEnding() {
+      const sanity = window.SanitySystem?.get?.() ?? Number(localStorage.getItem("sanity_v1") || 100);
+      const flags = getFlags();
+      const endings = window.ENDING_CONFIG || [];
+
+      return endings.find(ending => {
+        if (typeof ending.minSanity === "number" && sanity < ending.minSanity) return false;
+        if (typeof ending.maxSanity === "number" && sanity > ending.maxSanity) return false;
+        if (!hasAll(flags, ending.requiresFlags || [])) return false;
+        if (ending.anyFlags && !hasAny(flags, ending.anyFlags)) return false;
+        if (!hasNone(flags, ending.forbiddenFlags || [])) return false;
+        if (!hasItems(ending.requiresItems || [])) return false;
+        return true;
+      }) || {
+        title: "Ending: Unwritten",
+        text: "The house cannot decide what you became. That may be mercy.",
+        note: "No configured ending matched."
+      };
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const ending = pickEnding();
+      document.getElementById("endingTitle").textContent = ending.title;
+      document.getElementById("endingText").textContent = ending.text;
+      document.getElementById("endingNote").textContent = ending.note || "";
+      localStorage.setItem("lastEnding_v1", ending.id || ending.title);
+    });
+  </script>
+</body>
+</html>

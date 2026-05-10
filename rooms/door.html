@@ -38,6 +38,7 @@
     <button
       class="btn"
       onclick="useItem('silver_key', () => {
+        window.GameProgress?.unlockEnemySpawns('opened_front_door');
         goToRoom('corridor1.html');
       })"
     >
@@ -77,6 +78,7 @@
   <script src="../utils.js"></script>
 
   <!-- Room handler LAST -->
+  <script src="../rooms/content_config.js"></script>
   <script src="../rooms/script.js"></script>
 
   <!-- ======================

@@ -1,12 +1,49 @@
-/* rooms/rooms_system.js — room danger, resting, safe rooms, rituals */
+/* rooms/rooms_system.js — room danger, resting, safe rooms, rituals, game progress */
 
 (function () {
   const safeRooms = ["lore.html", "bedroom.html", "crafting.html"];
   const restOnceRooms = ["lore.html", "bedroom.html"];
+  const enemyUnlockRooms = ["corridor1.html", "attic.html", "bedroom.html", "playroom.html", "window.html", "lockedin.html"];
+  const PROGRESS_KEY = "gameProgress_v1";
 
   function roomName() {
     return window.location.pathname.split("/").pop() || "unknown.html";
   }
+
+  function readProgress() {
+    try {
+      return JSON.parse(localStorage.getItem(PROGRESS_KEY) || "{}");
+    } catch (_) {
+      return {};
+    }
+  }
+
+  function writeProgress(progress) {
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress || {}));
+  }
+
+  window.GameProgress = window.GameProgress || {
+    getFlags() { return readProgress(); },
+    hasFlag(flag) { return !!readProgress()[flag]; },
+    setFlag(flag, value = true) {
+      const progress = readProgress();
+      progress[flag] = value;
+      writeProgress(progress);
+    },
+    enemySpawnsUnlocked() {
+      return !!readProgress().enemySpawnsUnlocked;
+    },
+    unlockEnemySpawns(reason = "story") {
+      const progress = readProgress();
+      if (progress.enemySpawnsUnlocked) return false;
+      progress.enemySpawnsUnlocked = true;
+      progress.enemyUnlockReason = reason;
+      progress.enemyUnlockRoom = roomName();
+      progress.enemyUnlockTime = Date.now();
+      writeProgress(progress);
+      return true;
+    }
+  };
 
   function isSafeRoom() {
     return safeRooms.includes(roomName());
@@ -101,6 +138,12 @@
 
     restore(5, `risky_rest_${current}`);
     msg("You force yourself to breathe. +5 sanity");
+
+    if (!GameProgress.enemySpawnsUnlocked()) {
+      msg("For now, nothing answers the sound of your breathing.");
+      return;
+    }
+
     if (window.EnemySystem && Math.random() < 0.25) {
       setTimeout(() => EnemySystem.spawnRandom(), 600);
     }
@@ -108,19 +151,32 @@
 
   window.RoomsSystem = {
     safeRooms,
+    enemyUnlockRooms,
     rest,
 
     onRoomLoad() {
       addRestButton();
       addRitualButton();
 
+      const current = roomName();
+      let justUnlockedEnemies = false;
+
+      if (enemyUnlockRooms.includes(current) && !GameProgress.enemySpawnsUnlocked()) {
+        justUnlockedEnemies = GameProgress.unlockEnemySpawns(`entered_${current}`);
+        if (justUnlockedEnemies && window.showMessage) {
+          showMessage("Somewhere deeper in the house, something wakes up...");
+        }
+      }
+
       if (window.SanitySystem) SanitySystem.change(-1, "ambient");
 
-      if (!isSafeRoom() && window.EnemySystem && Math.random() < 0.25) {
+      const canSpawnEnemy = GameProgress.enemySpawnsUnlocked() && !justUnlockedEnemies;
+
+      if (canSpawnEnemy && !isSafeRoom() && window.EnemySystem && Math.random() < 0.25) {
         EnemySystem.spawnRandom();
       }
 
-      if (Math.random() < 0.12 && window.showMessage) {
+      if (GameProgress.enemySpawnsUnlocked() && Math.random() < 0.12 && window.showMessage) {
         showMessage("You hear distant scratching in the walls...");
       }
     }

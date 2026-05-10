@@ -18,18 +18,24 @@
   <main class="crafting-shell">
     <section class="crafting-hero">
       <div>
-        <p class="eyebrow">Workbench</p>
-        <h1 class="title">Crafting Table</h1>
-        <p class="subtitle">Build tools, calm your mind, and turn scraps into survival.</p>
+        <p class="eyebrow">Workbench & Kitchen</p>
+        <h1 class="title">Crafting / Cooking</h1>
+        <p class="subtitle">Build tools, cook food, calm your mind, and turn scraps into survival.</p>
       </div>
       <div class="crafting-summary-card">
         <span id="craftingSummary">Loading recipes...</span>
-        <small>Crafted items save in your inventory.</small>
+        <small>Tools, meals, and crafted items save in your inventory.</small>
       </div>
     </section>
 
+    <section class="station-tabs" aria-label="Recipe station tabs">
+      <button class="station-tab active" data-station="all">All</button>
+      <button class="station-tab" data-station="crafting">Crafting</button>
+      <button class="station-tab" data-station="cooking">Cooking</button>
+    </section>
+
     <section class="crafting-controls">
-      <input id="craftingSearch" type="search" placeholder="Search recipes or ingredients...">
+      <input id="craftingSearch" type="search" placeholder="Search recipes, food, tools, or ingredients...">
       <select id="craftingFilter" aria-label="Filter recipes"></select>
       <button class="btn" onclick="history.back()">⬅ Back</button>
     </section>
