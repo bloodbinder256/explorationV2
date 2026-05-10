@@ -5,15 +5,6 @@
    Inventory stores ONLY item IDs + quantities.
    ===================================================== */
 
-/*
-RARITY COLORS:
-Common     #A3A3A3
-Uncommon   #35D413
-Rare       #13469C
-Mythical   #C713D4
-Legendary  #FDFF30
-*/
-
 window.ITEMS = {
   /* ---------- KEYS ---------- */
   "Silver Key": {
@@ -72,6 +63,51 @@ window.ITEMS = {
     stack: 128
   },
 
+  "Cloth": {
+    id: "cloth",
+    name: "Cloth",
+    icon: "../images/items/cloth.svg",
+    color: "#A3A3A3",
+    description: "A torn strip of cloth. Soft enough to hold herbs.",
+    stack: 20
+  },
+
+  "Water": {
+    id: "water",
+    name: "Water",
+    icon: "../images/items/water.svg",
+    color: "#35D413",
+    description: "Clean enough to drink. Barely.",
+    stack: 10
+  },
+
+  "Lavender": {
+    id: "lavender",
+    name: "Lavender",
+    icon: "../images/items/lavender.svg",
+    color: "#C713D4",
+    description: "Dried lavender. The smell cuts through the rot.",
+    stack: 20
+  },
+
+  "Wax": {
+    id: "wax",
+    name: "Wax",
+    icon: "../images/items/wax.svg",
+    color: "#FDFF30",
+    description: "Pale wax scraped from an old candle.",
+    stack: 20
+  },
+
+  "Flowers": {
+    id: "flowers",
+    name: "Flowers",
+    icon: "../images/items/flowers.svg",
+    color: "#C713D4",
+    description: "Wilted flowers. They still feel like an offering.",
+    stack: 10
+  },
+
   /* ---------- TOOLS ---------- */
   "Lighter": {
     id: "lighter",
@@ -87,11 +123,25 @@ window.ITEMS = {
     name: "Music Box",
     icon: "../images/items/music_box.png",
     color: "#13469C",
-    description: "A small music box playing a tune. Something feels wrong.",
-    stack: 1
+    description: "A small music box playing a tune. Something feels wrong, but familiar.",
+    stack: 1,
+    type: "ritual",
+    sanity: 20
   },
 
-  /* ---------- CONSUMABLES ---------- */
+  "Prayer Beads": {
+    id: "prayer_beads",
+    name: "Prayer Beads",
+    icon: "../images/items/prayer_beads.svg",
+    color: "#13469C",
+    description: "Worn smooth by worried hands.",
+    stack: 1,
+    type: "consumable",
+    sanity: 15,
+    heal: 0
+  },
+
+  /* ---------- CONSUMABLES / SANITY ITEMS ---------- */
   "Cold Tea": {
     id: "cold_tea",
     name: "Cold Tea",
@@ -113,6 +163,42 @@ window.ITEMS = {
     stack: 10,
     type: "consumable",
     sanity: 3,
+    heal: 0
+  },
+
+  "Lavender Tea": {
+    id: "lavender_tea",
+    name: "Lavender Tea",
+    icon: "../images/items/lavender_tea.svg",
+    color: "#C713D4",
+    description: "Warm, floral, and calming. Restores sanity.",
+    stack: 4,
+    type: "consumable",
+    sanity: 12,
+    heal: 0
+  },
+
+  "Comfort Candle": {
+    id: "comfort_candle",
+    name: "Comfort Candle",
+    icon: "../images/items/comfort_candle.svg",
+    color: "#FDFF30",
+    description: "A small candle made for comfort, not light.",
+    stack: 4,
+    type: "consumable",
+    sanity: 10,
+    heal: 0
+  },
+
+  "Sleep Sachet": {
+    id: "sleep_sachet",
+    name: "Sleep Sachet",
+    icon: "../images/items/sleep_sachet.svg",
+    color: "#35D413",
+    description: "Herbs wrapped in cloth. The smell reminds you to breathe.",
+    stack: 4,
+    type: "consumable",
+    sanity: 18,
     heal: 0
   }
 };

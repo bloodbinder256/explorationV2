@@ -146,20 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, duration);
   }
 
-  /* ===============================
-     PICKUPS
-  =============================== */
-  document.querySelectorAll("[data-pickup]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const id = btn.dataset.pickup;
-      const item = window.ITEMS_BY_ID?.[id];
-      if (!item || !window.Inventory) return;
-
-      Inventory.add(id, 1);
-      showMessage(`Picked up ${item.name}`);
-      btn.remove();
-    });
-  });
+  window.showMessage = showMessage;
 
   /* ===============================
      USE ITEMS

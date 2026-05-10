@@ -1,8 +1,6 @@
-/* rooms/enemies.js — enemy definitions + behaviors + dodge attacks */
+/* rooms/enemies.js — enemy definitions + dodge, attack, defeat */
 
 (function () {
-
-  /* ---------------- ENEMY DEFINITIONS ---------------- */
 
   window.ENEMIES = {
     shadow:  { id: "shadow",  name: "Shadow",  behavior: "standard",      attackSpeed: 900  },
@@ -14,38 +12,63 @@
     echo:    { id: "echo",    name: "Echo",    behavior: "uiDistort",     attackSpeed: 800  }
   };
 
-
-  /* ---------------- DODGE SYSTEM (GLOBAL) ---------------- */
-
   let dodgeWindow = false;
   let dodgeTimeout = null;
+  let currentEnemy = null;
+
+  function msg(text) {
+    window.showMessage ? showMessage(text) : alert(text);
+  }
+
+  function clearAttack() {
+    dodgeWindow = false;
+    clearTimeout(dodgeTimeout);
+    hideCombatPanel();
+  }
 
   function startDodgeWindow(time) {
     dodgeWindow = true;
+    showCombatPanel();
 
     dodgeTimeout = setTimeout(() => {
       dodgeWindow = false;
-      playerHit(); // didn't dodge in time
+      hideCombatPanel();
+      playerHit();
     }, time);
   }
 
   document.addEventListener("keydown", (e) => {
     if (!dodgeWindow) return;
-    if (e.key.toLowerCase() === "d") {
-      dodgeSuccess();
-    }
+    const key = e.key.toLowerCase();
+    if (key === "d") dodgeSuccess();
+    if (key === "f") fightBack();
   });
 
   function dodgeSuccess() {
-    dodgeWindow = false;
-    clearTimeout(dodgeTimeout);
+    clearAttack();
     showDodgeFlash();
-    if (window.showMessage) showMessage("You dodged!");
+    msg("You dodged!");
+  }
+
+  function fightBack() {
+    if (!dodgeWindow || !currentEnemy) return;
+    const success = Math.random() < 0.6;
+    clearAttack();
+
+    if (success) {
+      msg(`You defeated the ${currentEnemy.name}. +5 sanity`);
+      if (window.SanitySystem) SanitySystem.restore(5, "defeatedEnemy");
+      currentEnemy = null;
+    } else {
+      msg(`You swung too late. The ${currentEnemy.name} hit you!`);
+      playerHit();
+    }
   }
 
   function playerHit() {
-    if (window.showMessage) showMessage("You were hit!");
+    msg("You were hit!");
     if (window.SanitySystem) SanitySystem.change(-20, "enemyHit");
+    currentEnemy = null;
   }
 
   function showDodgeFlash() {
@@ -55,11 +78,28 @@
     setTimeout(() => flash.classList.remove("active"), 150);
   }
 
+  function showCombatPanel() {
+    let panel = document.getElementById("combatPanel");
+    if (!panel) {
+      panel = document.createElement("div");
+      panel.id = "combatPanel";
+      panel.innerHTML = `
+        <div class="combat-title">An attack is coming.</div>
+        <button class="btn mini-combat" id="dodgeBtn">Dodge [D]</button>
+        <button class="btn mini-combat" id="fightBtn">Fight Back [F]</button>
+      `;
+      document.body.appendChild(panel);
+      panel.querySelector("#dodgeBtn").addEventListener("click", dodgeSuccess);
+      panel.querySelector("#fightBtn").addEventListener("click", fightBack);
+    }
+    panel.classList.add("visible");
+  }
 
-  /* ---------------- ENEMY SYSTEM ---------------- */
+  function hideCombatPanel() {
+    document.getElementById("combatPanel")?.classList.remove("visible");
+  }
 
   window.EnemySystem = {
-
     spawnRandom() {
       const base = ["shadow", "mimic"];
       const unlocked = (window.DeathUnlocks && DeathUnlocks.getUnlocked)
@@ -77,70 +117,46 @@
       return def;
     },
 
-
-    /* ----------- Behavior + Dodge Integration ----------- */
-
     runBehavior(def) {
       if (!def) return;
-
-      // Always show some flavor text
-      if (window.showMessage) showMessage(`${def.name} appears...`);
-
-      // Run special behavior
+      currentEnemy = def;
+      msg(`${def.name} appears...`);
       this.runPassiveEffect(def);
-
-      // Start an attack after a short windup
       this.startAttack(def);
     },
 
-
     runPassiveEffect(def) {
       switch (def.behavior) {
-        case "standard":
-          if (window.showMessage) showMessage("It watches you silently...");
-          break;
-
-        case "jumpscare":
-          if (window.showMessage) showMessage("It prepares to lunge!");
-          break;
-
+        case "standard": msg("It watches you silently..."); break;
+        case "jumpscare": msg("It prepares to lunge!"); break;
         case "sanityHunter":
-          if (window.showMessage) showMessage("Your mind feels weaker...");
+          msg("Your mind feels weaker...");
           if (window.SanitySystem) SanitySystem.change(-10, "ambientDrain");
           break;
-
-        case "behindPlayer":
-          if (window.showMessage) showMessage("Breathing behind you...");
-          break;
-
-        case "wandering":
-          if (window.showMessage) showMessage("It drifts without purpose.");
-          break;
-
+        case "behindPlayer": msg("Breathing behind you..."); break;
+        case "wandering": msg("It drifts without purpose."); break;
         case "backgroundCreep":
           document.body.classList.add("enemy-bg-flash");
           setTimeout(() => document.body.classList.remove("enemy-bg-flash"), 900);
           break;
-
         case "uiDistort":
           document.body.classList.add("ui-distort");
           setTimeout(() => document.body.classList.remove("ui-distort"), 1400);
           break;
-
-        default:
-          break;
+        default: break;
       }
     },
 
-
-    /* Attack → Dodge prompt */
     startAttack(def) {
       if (!def.attackSpeed) def.attackSpeed = 1000;
-
       setTimeout(() => {
-        if (window.showMessage) showMessage(`${def.name} attacks — Press D to dodge!`);
+        msg(`${def.name} attacks — Dodge [D] or fight back [F]!`);
         startDodgeWindow(def.attackSpeed);
       }, 900);
+    },
+
+    defeatCurrent() {
+      fightBack();
     }
   };
 

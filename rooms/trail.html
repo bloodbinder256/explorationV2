@@ -33,8 +33,16 @@
     <p class="subtitle">Why is there a key here...</p>
 
     <!-- ===== PICKUPS ===== -->
-    <button class="btn" onclick="pickupItem('silver_key')">
+    <button class="btn" onclick="pickupItem('metal_scrap')">
       Pick up Silver Key
+    </button>
+
+    <button class="btn" onclick="pickupItem('flowers')">
+      Pick up Wilted Flowers
+    </button>
+
+    <button class="btn" onclick="pickupItem('lavender')">
+      Pick up Wild Lavender
     </button>
 
     <!-- ===== NAVIGATION ===== -->
@@ -64,6 +72,7 @@
   <script src="../rooms/death_unlocks.js"></script>
   <script src="../rooms/enemies.js"></script>
   <script src="../rooms/trophies.js"></script>
+  <script src="../rooms/rooms_system.js"></script>
 
   <!-- Utilities -->
   <script src="../utils.js"></script>
@@ -77,8 +86,7 @@
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       document.body.classList.add("fade-in");
-
-    });
+});
   </script>
 
 </body>

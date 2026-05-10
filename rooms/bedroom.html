@@ -38,6 +38,14 @@
       Pick up Music Box
     </button>
 
+    <button class="btn" onclick="pickupItem('lavender')">
+      Pick up Lavender
+    </button>
+
+    <button class="btn" onclick="pickupItem('cloth')">
+      Pick up Torn Cloth
+    </button>
+
     <!-- ===== NAVIGATION ===== -->
     <button class="btn" onclick="goToRoom('corridor1.html')">
       Go to Next Room
@@ -65,6 +73,7 @@
   <script src="../rooms/death_unlocks.js"></script>
   <script src="../rooms/enemies.js"></script>
   <script src="../rooms/trophies.js"></script>
+  <script src="../rooms/rooms_system.js"></script>
 
   <!-- Utilities -->
   <script src="../utils.js"></script>
@@ -78,12 +87,7 @@
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       document.body.classList.add("fade-in");
-
-      // Example: spawn enemy chance
-      if (Math.random() < 0.25) {
-        EnemySystem.spawnRandom();
-      }
-    });
+});
   </script>
 
 </body>

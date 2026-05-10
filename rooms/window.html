@@ -61,6 +61,7 @@
   <script src="../rooms/death_unlocks.js"></script>
   <script src="../rooms/enemies.js"></script>
   <script src="../rooms/trophies.js"></script>
+  <script src="../rooms/rooms_system.js"></script>
 
   <!-- Utilities -->
   <script src="../utils.js"></script>
@@ -74,12 +75,7 @@
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       document.body.classList.add("fade-in");
-
-      // Example: spawn enemy chance
-      if (Math.random() < 0.25) {
-        EnemySystem.spawnRandom();
-      }
-    });
+});
   </script>
 
 </body>

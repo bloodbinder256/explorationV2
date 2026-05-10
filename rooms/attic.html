@@ -47,6 +47,14 @@
       Pick up Rubber Ball
     </button>
 
+    <button class="btn" onclick="pickupItem('wax')">
+      Pick up Candle Wax
+    </button>
+
+    <button class="btn" onclick="pickupItem('prayer_beads')">
+      Pick up Prayer Beads
+    </button>
+
     <!-- ===== NAVIGATION ===== -->
     <button class="btn" onclick="goToRoom('corridor1.html')">
       Go Down The Stairs
@@ -74,6 +82,7 @@
   <script src="../rooms/death_unlocks.js"></script>
   <script src="../rooms/enemies.js"></script>
   <script src="../rooms/trophies.js"></script>
+  <script src="../rooms/rooms_system.js"></script>
 
   <!-- Utilities -->
   <script src="../utils.js"></script>
@@ -87,12 +96,7 @@
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       document.body.classList.add("fade-in");
-
-      // Example: spawn enemy chance
-      if (Math.random() < 0.25) {
-        EnemySystem.spawnRandom();
-      }
-    });
+});
   </script>
 
 </body>
