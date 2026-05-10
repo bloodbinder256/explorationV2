@@ -1,0 +1,67 @@
+/* ============================
+   INVENTORY PANEL
+============================ */
+
+#invToggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 8px 16px;
+  border: 2px solid red;
+  background: black;
+  color: red;
+  cursor: pointer;
+  z-index: 2000;
+}
+
+#inventory {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  min-width: 220px;
+  max-width: 300px;
+  min-height: 60px;
+  padding: 12px;
+  background: rgba(0,0,0,0.85);
+  border: 2px solid red;
+  color: red;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  z-index: 2000;
+
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+#inventory.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.inv-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 2px solid red;
+  padding: 6px 10px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  border-radius: 4px;
+}
+
+.inv-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.inv-count {
+  margin-left: auto;
+  opacity: 0.8;
+}

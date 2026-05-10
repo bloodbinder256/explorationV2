@@ -1,2 +1,3 @@
-# explorationV2
-Exploration is a game I made at one point on my other account and it was broken, UNTIL NOW!
+# Exploration
+
+My exploration horror game, Starting at 11/24/25

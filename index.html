@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Endless Requium</title>
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Anime.js -->
+  <script src="libs/anime.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      opacity: 0;
+      transition: opacity 1.8s ease-in-out;
+      overflow: hidden;
+      font-family: serif;
+    }
+
+    body.fade-in {
+      opacity: 1;
+    }
+
+    #titleScreen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      z-index: 9999;
+    }
+
+    .title {
+      font-size: 64px;
+      color: white;
+      letter-spacing: 6px;
+      opacity: 0;
+      filter: drop-shadow(0 0 15px rgba(255,0,0,0.4));
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: #ccc;
+      margin-top: -10px;
+      opacity: 0;
+    }
+
+    .menu-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 40px;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .btn {
+      width: 220px;
+      padding: 14px 0;
+      background: transparent;
+      border: 2px solid white;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      letter-spacing: 2px;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      background: white;
+      color: black;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px white;
+    }
+
+    .btn.danger {
+      border-color: #a00;
+      color: #a00;
+    }
+
+    .btn.danger:hover {
+      background: #a00;
+      color: white;
+      box-shadow: 0 0 20px #a00;
+    }
+
+    .bg-fade {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, black 85%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      background: white;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+
+<body class="fade-in">
+
+  <!-- TITLE SCREEN -->
+  <div id="titleScreen">
+    <div class="bg-fade"></div>
+
+    <h1 class="title">ENDLESS REQUIUM</h1>
+    <p class="subtitle">A mind that breaks… remembers.</p>
+
+    <div class="menu-buttons">
+      <button class="btn" id="continueBtn">CONTINUE</button>
+      <button class="btn" id="newBtn">NEW RUN</button>
+      <button class="btn danger" id="deleteBtn">DELETE PROGRESS</button>
+    </div>
+  </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const title = document.querySelector(".title");
+  const subtitle = document.querySelector(".subtitle");
+  const menu = document.querySelector(".menu-buttons");
+  const bgFade = document.querySelector(".bg-fade");
+
+  const continueBtn = document.getElementById("continueBtn");
+  const newBtn = document.getElementById("newBtn");
+  const deleteBtn = document.getElementById("deleteBtn");
+
+  /* ---------- PARTICLES ---------- */
+  for (let i = 0; i < 40; i++) {
+    const p = document.createElement("div");
+    p.className = "particle";
+    document.body.appendChild(p);
+
+    p.style.left = Math.random() * window.innerWidth + "px";
+    p.style.top = Math.random() * window.innerHeight + "px";
+
+    anime({
+      targets: p,
+      translateY: [-20, -200],
+      opacity: [0.4, 0],
+      duration: 4000 + Math.random() * 4000,
+      easing: "linear",
+      loop: true,
+      delay: Math.random() * 2000
+    });
+  }
+
+  /* ---------- INTRO ANIMATIONS ---------- */
+  anime({ targets: bgFade, opacity: [0,1], duration: 1200 });
+  anime({ targets: title, opacity: [0,1], translateY: [-40,0], delay: 200 });
+  anime({ targets: subtitle, opacity: [0,1], translateY: [-20,0], delay: 400 });
+  anime({ targets: menu, opacity: [0,1], translateY: [20,0], delay: 800 });
+
+  /* ---------- SAVE CHECK ---------- */
+  const lastRoom = localStorage.getItem("lastRoom");
+  if (!lastRoom) continueBtn.style.display = "none";
+
+  /* ---------- FADE ---------- */
+  function fadeOut(cb) {
+    anime({
+      targets: "#titleScreen",
+      opacity: [1,0],
+      duration: 900,
+      easing: "easeInQuad",
+      complete: cb
+    });
+  }
+
+/* ---------- NEW RUN ---------- */
+newBtn.addEventListener("click", () => {
+  if (!confirm("Start a new run? All progress will be lost.")) return;
+
+  wipeSave();
+  localStorage.setItem("sanity_v1", 100);
+
+  fadeOut();
+  setTimeout(() => {
+    window.location.href = "rooms/lore.html";
+  }, 950);
+});
+
+/* ---------- CONTINUE ---------- */
+continueBtn.addEventListener("click", () => {
+  fadeOut();
+  setTimeout(() => {
+    window.location.href = localStorage.getItem("lastRoom");
+  }, 950);
+});
+
+  /* ---------- DELETE PROGRESS ---------- */
+  deleteBtn.addEventListener("click", () => {
+    if (!confirm("Delete ALL progress? This cannot be undone.")) return;
+    wipeSave();
+    alert("Progress deleted.");
+    location.reload();
+  });
+
+  /* ---------- FULL WIPE (FIX) ---------- */
+  function wipeSave() {
+    localStorage.clear();
+  }
+
+});
+</script>
+
+</body>
+</html>
