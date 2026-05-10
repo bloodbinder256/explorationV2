@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Endless Requium</title>
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Anime.js -->
+  <script src="libs/anime.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      opacity: 0;
+      transition: opacity 1.8s ease-in-out;
+      overflow: hidden;
+      font-family: serif;
+    }
+
+    body.fade-in {
+      opacity: 1;
+    }
+
+    #titleScreen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      z-index: 9999;
+    }
+
+    .title {
+      font-size: 64px;
+      color: white;
+      letter-spacing: 6px;
+      opacity: 0;
+      filter: drop-shadow(0 0 15px rgba(255,0,0,0.4));
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: #ccc;
+      margin-top: -10px;
+      opacity: 0;
+    }
+
+    .menu-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 40px;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .btn {
+      width: 220px;
+      padding: 14px 0;
+      background: transparent;
+      border: 2px solid white;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      letter-spacing: 2px;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      background: white;
+      color: black;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px white;
+    }
+
+    .btn.danger {
+      border-color: #a00;
+      color: #a00;
+    }
+
+    .btn.danger:hover {
+      background: #a00;
+      color: white;
+      box-shadow: 0 0 20px #a00;
+    }
+
+    .bg-fade {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, black 85%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      background: white;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+
+<body class="fade-in">
+
+  <!-- TITLE SCREEN -->
+  <div id="titleScreen">
+    <div class="bg-fade"></div>
+
+    <h1 class="title">ENDLESS REQUIUM</h1>
+    <p class="subtitle">A mind that breaks… remembers.</p>
+
+    <div class="menu-buttons">
+      <button class="btn" id="continueBtn">CONTINUE</button>
+      <button class="btn" id="newBtn">NEW RUN</button>
+      <button class="btn danger" id="deleteBtn">DELETE PROGRESS</button>
+    </div>
+  </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const title = document.querySelector(".title");
+  const subtitle = document.querySelector(".subtitle");
+  const menu = document.querySelector(".menu-buttons");
+  const bgFade = document.querySelector(".bg-fade");
+
+  const continueBtn = document.getElementById("continueBtn");
+  const newBtn = document.getElementById("newBtn");
+  const deleteBtn = document.getElementById("deleteBtn");
+
+  /* ---------- SMALL ANIMATION HELPER ----------
+     The bundled Anime.js is v4, which no longer works as anime({...}).
+     This helper uses the browser's built-in Web Animations API instead,
+     so the title screen works even from a plain file:// launch.
+  ------------------------------------------------ */
+  function animateElement(targets, props = {}) {
+    const elements = typeof targets === "string"
+      ? document.querySelectorAll(targets)
+      : (targets instanceof Element ? [targets] : targets);
+
+    [...elements].forEach((el) => {
+      const fromOpacity = Array.isArray(props.opacity) ? props.opacity[0] : undefined;
+      const toOpacity = Array.isArray(props.opacity) ? props.opacity[1] : props.opacity;
+      const fromY = Array.isArray(props.translateY) ? props.translateY[0] : undefined;
+      const toY = Array.isArray(props.translateY) ? props.translateY[1] : props.translateY;
+
+      const frames = [];
+      const start = {};
+      const end = {};
+
+      if (fromOpacity !== undefined) start.opacity = fromOpacity;
+      if (toOpacity !== undefined) end.opacity = toOpacity;
+      if (fromY !== undefined) start.transform = `translateY(${fromY}px)`;
+      if (toY !== undefined) end.transform = `translateY(${toY}px)`;
+
+      frames.push(start, end);
+
+      const anim = el.animate(frames, {
+        duration: props.duration || 900,
+        delay: props.delay || 0,
+        easing: props.easing === "linear" ? "linear" : "ease",
+        iterations: props.loop ? Infinity : 1,
+        fill: "forwards"
+      });
+
+      if (props.complete) anim.addEventListener("finish", props.complete, { once: true });
+    });
+  }
+
+  function safeRoomPath(saved) {
+    if (!saved) return null;
+
+    // Accept normal relative saves like "rooms/attic.html" or "attic.html".
+    if (/^rooms\/[\w-]+\.html$/.test(saved)) return saved;
+    if (/^[\w-]+\.html$/.test(saved)) return `rooms/${saved}`;
+
+    // Convert old absolute file/http saves back into a safe relative room path.
+    try {
+      const url = new URL(saved, window.location.href);
+      const match = url.pathname.match(/\/rooms\/([\w-]+\.html)$/);
+      if (match) return `rooms/${match[1]}`;
+    } catch (_) {}
+
+    return null;
+  }
+
+  /* ---------- PARTICLES ---------- */
+  for (let i = 0; i < 40; i++) {
+    const p = document.createElement("div");
+    p.className = "particle";
+    document.body.appendChild(p);
+
+    p.style.left = Math.random() * window.innerWidth + "px";
+    p.style.top = Math.random() * window.innerHeight + "px";
+
+    animateElement(p, {
+      translateY: [-20, -200],
+      opacity: [0.4, 0],
+      duration: 4000 + Math.random() * 4000,
+      easing: "linear",
+      loop: true,
+      delay: Math.random() * 2000
+    });
+  }
+
+  /* ---------- INTRO ANIMATIONS ---------- */
+  animateElement(bgFade, { opacity: [0, 1], duration: 1200 });
+  animateElement(title, { opacity: [0, 1], translateY: [-40, 0], delay: 200 });
+  animateElement(subtitle, { opacity: [0, 1], translateY: [-20, 0], delay: 400 });
+  animateElement(menu, { opacity: [0, 1], translateY: [20, 0], delay: 800 });
+
+  /* ---------- SAVE CHECK ---------- */
+  const lastRoom = safeRoomPath(localStorage.getItem("lastRoom"));
+  if (!lastRoom) {
+    localStorage.removeItem("lastRoom");
+    continueBtn.style.display = "none";
+  }
+
+  /* ---------- FADE ---------- */
+  function fadeOut(cb) {
+    animateElement("#titleScreen", {
+      opacity: [1, 0],
+      duration: 900,
+      complete: cb
+    });
+  }
+
+  /* ---------- NEW RUN ---------- */
+  newBtn.addEventListener("click", () => {
+    if (!confirm("Start a new run? All progress will be lost.")) return;
+
+    wipeSave();
+    localStorage.setItem("sanity_v1", 100);
+
+    fadeOut(() => {
+      window.location.href = "rooms/lore.html";
+    });
+  });
+
+  /* ---------- CONTINUE ---------- */
+  continueBtn.addEventListener("click", () => {
+    const room = safeRoomPath(localStorage.getItem("lastRoom"));
+    if (!room) {
+      localStorage.removeItem("lastRoom");
+      alert("That saved room path was old or invalid. Start a new run.");
+      continueBtn.style.display = "none";
+      return;
+    }
+
+    fadeOut(() => {
+      window.location.href = room;
+    });
+  });
+
+  /* ---------- DELETE PROGRESS ---------- */
+  deleteBtn.addEventListener("click", () => {
+    if (!confirm("Delete ALL progress? This cannot be undone.")) return;
+    wipeSave();
+    alert("Progress deleted.");
+    location.reload();
+  });
+
+  function wipeSave() {
+    localStorage.clear();
+  }
+});
+</script>
+
+</body>
+</html>
