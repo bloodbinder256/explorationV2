@@ -114,62 +114,167 @@ window.useInventoryItem = function (itemId) {
 };
 
 /* ============================
-   REFRESH INVENTORY UI
+   REFRESH INVENTORY UI — UPGRADED
 ============================ */
+
+window.InventoryUI = window.InventoryUI || {
+  search: "",
+  filter: "all",
+  sort: "name"
+};
+
+function inventoryTypeFor(item = {}) {
+  if (item.type === "consumable") return "consumable";
+  if (item.type === "ritual") return "ritual";
+  if ((item.stack || 1) === 1) return "key/tool";
+  return "material";
+}
+
+function typeLabel(type) {
+  return {
+    all: "All",
+    consumable: "Consumables",
+    ritual: "Ritual",
+    "key/tool": "Keys / Tools",
+    material: "Materials"
+  }[type] || type;
+}
+
+function inventoryEntries() {
+  return Object.keys(Inventory.data)
+    .map(id => ({ id, item: window.ITEMS_BY_ID?.[id], count: Inventory.data[id] }))
+    .filter(entry => entry.item);
+}
 
 window.refreshInventoryUI = function () {
   const invPanel = document.getElementById("inventory");
   if (!invPanel) return;
 
-  invPanel.innerHTML = "";
+  const allEntries = inventoryEntries();
+  const totalItems = allEntries.reduce((sum, entry) => sum + entry.count, 0);
+  const uniqueItems = allEntries.length;
+  const q = (InventoryUI.search || "").trim().toLowerCase();
+  const filterType = InventoryUI.filter || "all";
 
-  const ids = Object.keys(Inventory.data);
-  if (ids.length === 0) {
-    invPanel.innerHTML = `<div style="opacity:0.6">(empty)</div>`;
-  }
-
-  ids.forEach(id => {
-    const item = window.ITEMS_BY_ID?.[id];
-    if (!item) return;
-
-    const row = document.createElement("div");
-    row.className = "inv-item";
-    if (item.color) row.style.borderColor = item.color;
-
-    const useButton = item.type === "consumable"
-      ? `<button class="mini-btn" data-use-inventory="${id}">Use</button>`
-      : "";
-
-    row.innerHTML = `
-      <img class="inv-icon" src="${item.icon}" alt="">
-      <span class="inv-name" title="${item.description || ''}">${item.name}</span>
-      <span class="inv-count">x${Inventory.data[id]}</span>
-      ${useButton}
-    `;
-
-    row.querySelector("[data-use-inventory]")?.addEventListener("click", (e) => {
-      e.stopPropagation();
-      useInventoryItem(id);
-    });
-
-    invPanel.appendChild(row);
+  let entries = allEntries.filter(({ id, item }) => {
+    const itemType = inventoryTypeFor(item);
+    const matchesFilter = filterType === "all" || itemType === filterType;
+    const matchesSearch = !q ||
+      item.name.toLowerCase().includes(q) ||
+      id.toLowerCase().includes(q) ||
+      (item.description || "").toLowerCase().includes(q) ||
+      itemType.toLowerCase().includes(q);
+    return matchesFilter && matchesSearch;
   });
 
-  // Crafting button
-  if (!invPanel.querySelector("#craftingBtn")) {
-    const craftBtn = document.createElement("button");
-    craftBtn.id = "craftingBtn";
-    craftBtn.textContent = "🛠️ Crafting Table";
-    craftBtn.className = "btn";
-    craftBtn.style.marginTop = "10px";
+  entries.sort((a, b) => {
+    if (InventoryUI.sort === "count") return b.count - a.count || a.item.name.localeCompare(b.item.name);
+    if (InventoryUI.sort === "type") return inventoryTypeFor(a.item).localeCompare(inventoryTypeFor(b.item)) || a.item.name.localeCompare(b.item.name);
+    return a.item.name.localeCompare(b.item.name);
+  });
 
-    craftBtn.addEventListener("click", () => {
-      localStorage.setItem("lastRoom", window.location.pathname.split("/").pop());
-      window.location.href = "crafting.html";
+  invPanel.innerHTML = `
+    <div class="inventory-header">
+      <div>
+        <strong>Inventory</strong>
+        <small>${uniqueItems} unique · ${totalItems} total</small>
+      </div>
+      <button class="mini-btn inventory-close" type="button" aria-label="Close inventory">×</button>
+    </div>
+
+    <div class="inventory-controls">
+      <input id="inventorySearch" type="search" placeholder="Search items..." value="${InventoryUI.search.replace(/"/g, '&quot;')}">
+      <div class="inventory-filter-row">
+        <select id="inventoryFilter" aria-label="Filter inventory">
+          ${["all", "consumable", "material", "key/tool", "ritual"].map(type => `<option value="${type}" ${filterType === type ? "selected" : ""}>${typeLabel(type)}</option>`).join("")}
+        </select>
+        <select id="inventorySort" aria-label="Sort inventory">
+          <option value="name" ${InventoryUI.sort === "name" ? "selected" : ""}>Name</option>
+          <option value="type" ${InventoryUI.sort === "type" ? "selected" : ""}>Type</option>
+          <option value="count" ${InventoryUI.sort === "count" ? "selected" : ""}>Count</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="inventory-list"></div>
+
+    <div class="inventory-footer">
+      <button id="craftingBtn" class="btn" type="button">Craft / Cook</button>
+    </div>
+  `;
+
+  const list = invPanel.querySelector(".inventory-list");
+
+  if (allEntries.length === 0) {
+    list.innerHTML = `<div class="inventory-empty">Your pockets are empty.</div>`;
+  } else if (entries.length === 0) {
+    list.innerHTML = `<div class="inventory-empty">No items match that search.</div>`;
+  } else {
+    entries.forEach(({ id, item, count }) => {
+      const itemType = inventoryTypeFor(item);
+      const row = document.createElement("div");
+      row.className = `inv-item inv-type-${itemType.replace(/[^a-z0-9]+/g, '-')}`;
+      if (item.color) row.style.setProperty("--item-color", item.color);
+
+      const useButton = item.type === "consumable"
+        ? `<button class="mini-btn inv-use-btn" type="button" data-use-inventory="${id}">Use</button>`
+        : "";
+
+      row.innerHTML = `
+        <div class="inv-icon-wrap"><img class="inv-icon" src="${item.icon}" alt=""></div>
+        <div class="inv-text">
+          <div class="inv-title-line">
+            <span class="inv-name" title="${item.description || ''}">${item.name}</span>
+            <span class="inv-count">×${count}</span>
+          </div>
+          <div class="inv-meta">
+            <span>${typeLabel(itemType)}</span>
+            ${item.stack ? `<span>Stack ${item.stack}</span>` : ""}
+            ${item.sanity ? `<span>+${item.sanity} sanity</span>` : ""}
+          </div>
+          ${item.description ? `<p class="inv-desc">${item.description}</p>` : ""}
+        </div>
+        <div class="inv-actions">${useButton}</div>
+      `;
+
+      row.querySelector("[data-use-inventory]")?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        useInventoryItem(id);
+      });
+
+      list.appendChild(row);
     });
-
-    invPanel.appendChild(craftBtn);
   }
+
+  invPanel.querySelector(".inventory-close")?.addEventListener("click", () => {
+    invPanel.classList.remove("visible");
+  });
+
+  invPanel.querySelector("#inventorySearch")?.addEventListener("input", (e) => {
+    InventoryUI.search = e.target.value;
+    refreshInventoryUI();
+    const searchBox = document.getElementById("inventorySearch");
+    if (searchBox) {
+      searchBox.focus();
+      searchBox.setSelectionRange(searchBox.value.length, searchBox.value.length);
+    }
+  });
+
+  invPanel.querySelector("#inventoryFilter")?.addEventListener("change", (e) => {
+    InventoryUI.filter = e.target.value;
+    refreshInventoryUI();
+  });
+
+  invPanel.querySelector("#inventorySort")?.addEventListener("change", (e) => {
+    InventoryUI.sort = e.target.value;
+    refreshInventoryUI();
+  });
+
+  invPanel.querySelector("#craftingBtn")?.addEventListener("click", () => {
+    const current = window.location.pathname.split("/").pop();
+    if (current !== "crafting.html") localStorage.setItem("lastRoom", current);
+    window.location.href = "crafting.html";
+  });
 };
 
 /* ============================

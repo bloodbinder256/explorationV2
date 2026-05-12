@@ -12,6 +12,17 @@
    - setFlag: "flag_name" marks a story choice as happened
    - requiresFlag: "flag_name" means this option/encounter/ending needs that flag
 
+   Interactions you can add to options:
+   - response: text shown in the response box
+   - sanity: positive or negative sanity change
+   - setFlag: saves a story flag
+   - requiresItem: needs an inventory item before it can be clicked
+   - consumesItem: true removes the required item
+   - itemReward: gives the player an item
+   - itemRewardAmount: amount of the rewarded item
+   - goToRoom: moves to another room after the response
+   - message: popup message
+
    Entity images:
    - image: path to a portrait file, for example "../images/entities/my_entity.png"
    - imageAlt: alt text for the portrait

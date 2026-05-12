@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Endless Requium</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:,">
 
   <!-- Anime.js -->
   <script src="libs/anime.min.js"></script>
@@ -16,7 +17,7 @@
     }
 
     #titleScreen {
-      position: absolute;
+      position: fixed;
       inset: 0;
       display: flex;
       flex-direction: column;
@@ -25,21 +26,23 @@
       gap: 10px;
       z-index: 9999;
       text-align: center;
-      padding: 24px;
+      padding: 24px 24px 12vh;
     }
 
     .title {
-      opacity: 0;
+      opacity: 1;
     }
 
     .subtitle {
-      opacity: 0;
+      opacity: 1;
       margin-top: -4px;
     }
 
     .menu-buttons {
-      opacity: 0;
-      transform: translateY(20px);
+      opacity: 1;
+      transform: translateY(0);
+      margin-top: 18px;
+      gap: 12px;
     }
 
     .menu-buttons .btn {
@@ -53,7 +56,7 @@
       background:
         radial-gradient(circle at center, rgba(191,202,255,0.08) 0%, rgba(4,6,11,.28) 40%, rgba(4,6,11,.95) 88%),
         radial-gradient(circle at 50% 35%, rgba(255,255,255,0.08), transparent 26%);
-      opacity: 0;
+      opacity: 1;
       pointer-events: none;
     }
 
@@ -95,6 +98,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const continueBtn = document.getElementById("continueBtn");
   const newBtn = document.getElementById("newBtn");
   const deleteBtn = document.getElementById("deleteBtn");
+
+  function forceTitleVisible() {
+    [title, subtitle, menu, bgFade].forEach((el) => {
+      if (!el) return;
+      el.style.opacity = "1";
+      el.style.visibility = "visible";
+    });
+    if (menu) menu.style.transform = "none";
+  }
+
+  // Fail-safe: the menu should never depend on animation to become visible.
+  forceTitleVisible();
+  setTimeout(forceTitleVisible, 1200);
 
   /* ---------- SMALL ANIMATION HELPER ----------
      The bundled Anime.js is v4, which no longer works as anime({...}).
@@ -152,30 +168,36 @@ document.addEventListener("DOMContentLoaded", () => {
     return null;
   }
 
-  /* ---------- PARTICLES ---------- */
-  for (let i = 0; i < 40; i++) {
-    const p = document.createElement("div");
-    p.className = "particle";
-    document.body.appendChild(p);
+  /* ---------- PARTICLES + INTRO ANIMATIONS ----------
+     These are cosmetic only. If animation fails, the buttons stay visible.
+  ---------------------------------------------------- */
+  try {
+    for (let i = 0; i < 40; i++) {
+      const p = document.createElement("div");
+      p.className = "particle";
+      document.body.appendChild(p);
 
-    p.style.left = Math.random() * window.innerWidth + "px";
-    p.style.top = Math.random() * window.innerHeight + "px";
+      p.style.left = Math.random() * window.innerWidth + "px";
+      p.style.top = Math.random() * window.innerHeight + "px";
 
-    animateElement(p, {
-      translateY: [-20, -200],
-      opacity: [0.4, 0],
-      duration: 4000 + Math.random() * 4000,
-      easing: "linear",
-      loop: true,
-      delay: Math.random() * 2000
-    });
+      animateElement(p, {
+        translateY: [-20, -200],
+        opacity: [0.4, 0],
+        duration: 4000 + Math.random() * 4000,
+        easing: "linear",
+        loop: true,
+        delay: Math.random() * 2000
+      });
+    }
+
+    animateElement(bgFade, { opacity: [0, 1], duration: 1200 });
+    animateElement(title, { opacity: [0, 1], translateY: [-40, 0], delay: 200 });
+    animateElement(subtitle, { opacity: [0, 1], translateY: [-20, 0], delay: 400 });
+    animateElement(menu, { opacity: [0, 1], translateY: [20, 0], delay: 800 });
+  } catch (err) {
+    console.warn("Title animation skipped:", err);
+    forceTitleVisible();
   }
-
-  /* ---------- INTRO ANIMATIONS ---------- */
-  animateElement(bgFade, { opacity: [0, 1], duration: 1200 });
-  animateElement(title, { opacity: [0, 1], translateY: [-40, 0], delay: 200 });
-  animateElement(subtitle, { opacity: [0, 1], translateY: [-20, 0], delay: 400 });
-  animateElement(menu, { opacity: [0, 1], translateY: [20, 0], delay: 800 });
 
   /* ---------- SAVE CHECK ---------- */
   const lastRoom = safeRoomPath(localStorage.getItem("lastRoom"));

@@ -262,40 +262,93 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ===============================
-     ROOM DIALOGUE SYSTEM
+     ROOM DIALOGUE / UNIFIED CHOICE SYSTEM
   =============================== */
+  function getRoomActionButtons(center) {
+    return [...center.children].filter((el) => {
+      if (!(el instanceof HTMLButtonElement)) return false;
+      if (el.closest('.dialogue-panel')) return false;
+      if (el.id === 'invToggle') return false;
+      return true;
+    });
+  }
+
+  function moveRoomActionButtonsIntoPanel(center, panel) {
+    const choices = panel.querySelector('.dialogue-options');
+    if (!choices) return;
+
+    getRoomActionButtons(center).forEach((button) => {
+      // Turn normal room buttons into the same style as dialogue choices.
+      button.classList.remove('btn');
+      button.classList.add('dialogue-option', 'room-action-option');
+      button.dataset.unifiedChoice = 'true';
+      choices.appendChild(button);
+    });
+  }
+
+  function watchForNewRoomActionButtons(center, panel) {
+    if (!center || !panel || panel.dataset.watchingActions === 'true') return;
+    panel.dataset.watchingActions = 'true';
+
+    const observer = new MutationObserver(() => {
+      if (!document.body.contains(panel)) {
+        observer.disconnect();
+        return;
+      }
+      moveRoomActionButtonsIntoPanel(center, panel);
+    });
+
+    observer.observe(center, { childList: true });
+  }
+
   function initDialogueSystem() {
     const room = window.location.pathname.split('/').pop() || 'unknown.html';
     const center = document.querySelector('.center-box');
-    if (!center || document.querySelector('.dialogue-panel')) return;
+    if (!center || document.querySelector('.room-dialogue-panel')) return false;
 
     const dialogues = window.ROOM_DIALOGUES || {};
-
     const config = dialogues[room];
-    if (!config) return;
+    const roomActions = getRoomActionButtons(center);
+
+    if (!config && roomActions.length === 0) return false;
+
+    const availableOptions = (config?.options || []).map((opt, index) => {
+      const stateKey = `dialogue_used_${room}_${index}_v1`;
+      return !localStorage.getItem(stateKey) && canUseContentOption(opt);
+    });
+
+    // If no fresh dialogue remains, still build the panel if the room has
+    // navigation/pickup/rest actions. This keeps the room using one menu.
+    if (config && !availableOptions.some(Boolean) && roomActions.length === 0) return false;
 
     const panel = document.createElement('section');
-    panel.className = 'dialogue-panel';
-    const optionsHtml = config.options.map((opt, index) => (
-      `<button class="dialogue-option" data-dialogue-index="${index}">${opt.label}</button>`
+    panel.className = 'dialogue-panel room-dialogue-panel unified-choice-panel';
+
+    const optionsHtml = (config?.options || []).map((opt, index) => (
+      `<button class="dialogue-option room-response-option" data-dialogue-index="${index}">${opt.label}</button>`
     )).join('');
+
     panel.innerHTML = `
-      <div class="dialogue-kicker">${config.kicker}</div>
-      <div class="dialogue-prompt">${config.prompt}</div>
+      <div class="dialogue-kicker">${config?.kicker || 'Room Choices'}</div>
+      <div class="dialogue-prompt">${config?.prompt || 'What do you do?'}</div>
       <div class="dialogue-options">${optionsHtml}</div>
-      <div class="dialogue-response">Choose a response and feel how the room answers.</div>
+      <div class="dialogue-response">Choose an action and feel how the room answers.</div>
     `;
 
     center.appendChild(panel);
+    moveRoomActionButtonsIntoPanel(center, panel);
+    watchForNewRoomActionButtons(center, panel);
 
     const responseBox = panel.querySelector('.dialogue-response');
-    panel.querySelectorAll('.dialogue-option').forEach((button) => {
+    panel.querySelectorAll('.room-response-option').forEach((button) => {
       const idx = Number(button.dataset.dialogueIndex);
       const option = config.options[idx];
       const stateKey = `dialogue_used_${room}_${idx}_v1`;
-      if (localStorage.getItem(stateKey) || !canUseContentOption(option)) {
+      const usable = canUseContentOption(option);
+
+      if (localStorage.getItem(stateKey) || !usable) {
         button.disabled = true;
-        if (!canUseContentOption(option) && option.requiresItem) {
+        if (!usable && option.requiresItem) {
           button.title = `Needs ${window.ITEMS_BY_ID?.[option.requiresItem]?.name || option.requiresItem}`;
         }
       }
@@ -312,12 +365,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         localStorage.setItem(stateKey, '1');
-        button.disabled = true;
         responseBox.innerHTML = `<strong>${option.label}:</strong> ${option.response}`;
-
         applyContentResult(option, `dialogue_${room}_${idx}`);
+        button.disabled = true;
+
+        // Keep the unified panel open so navigation/pickup options do not vanish.
+        // Entity encounters can still appear in rooms after the room dialogue has
+        // been used on a later visit, without creating two option menus at once.
       });
     });
+
+    return true;
   }
 
 
@@ -376,6 +434,17 @@ document.addEventListener("DOMContentLoaded", () => {
         window.showMessage?.(`${result.sanity} sanity`);
       }
     }
+
+    if (result.message) {
+      window.showMessage?.(result.message);
+    }
+
+    if (result.goToRoom) {
+      setTimeout(() => {
+        if (typeof window.goToRoom === "function") window.goToRoom(result.goToRoom);
+        else window.location.href = result.goToRoom;
+      }, result.goDelayMs || 650);
+    }
   }
 
   /* ===============================
@@ -387,7 +456,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const encounter = encounters[room];
     const center = document.querySelector('.center-box');
 
-    if (!encounter || !center || document.querySelector('.entity-panel')) return;
+    if (!encounter || !center || document.querySelector('.entity-panel') || document.querySelector('.room-dialogue-panel')) return;
 
     const encounterKey = `entity_seen_${encounter.id || room}_v1`;
     if (encounter.repeats === false && localStorage.getItem(encounterKey)) return;
@@ -470,8 +539,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   initAmbientEffects();
-  initDialogueSystem();
-  initEntityEncounterSystem();
+  const roomDialogueShown = initDialogueSystem();
+  if (!roomDialogueShown) initEntityEncounterSystem();
 
   /* ===============================
      TITLE AUTO-FIT
