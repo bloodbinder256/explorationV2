@@ -44,7 +44,7 @@ window.ROOM_DIALOGUES = {
     kicker: "Threshold",
     prompt: "The air is cold on this fall day. grandpa left you this estate after he disappeared, some people say its haunted and who goes in never comes out.. those are just rumors right?",
     options: [
-      { label: "Test", goToRoom: entitytest.html }
+      { label: "Test", goToRoom: "entitytest.html" }
              ]
   },
 
