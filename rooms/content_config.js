@@ -42,12 +42,8 @@
 window.ROOM_DIALOGUES = {
   "lore.html": {
     kicker: "Threshold",
-    prompt: "The air in the entry feels staged, as if the house expects you to speak first. What do you do?",
-    options: [
-      { label: "Announce yourself", response: "Your voice is swallowed softly. For a moment, the silence sounds polite.", sanity: -1, setFlag: "spoke_to_house" },
-      { label: "Step inside quietly", response: "You choose not to disturb whatever rhythm the house keeps. It rewards your caution with stillness.", sanity: 1, setFlag: "entered_gently" },
-      { label: "Listen before moving", response: "You catch the faint hum of old wood settling. It feels less like a warning than an invitation.", sanity: 2, setFlag: "listened_first" }
-    ]
+    prompt: "The air is cold on this fall day. grandpa left you this estate after he disappeared, some people say its haunted and who goes in never comes out.. those are just rumors right?",
+    options: []
   },
 
   "road.html": {
