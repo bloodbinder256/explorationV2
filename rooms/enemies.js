@@ -9,7 +9,7 @@
     stalker: { id: "stalker", name: "Stalker", behavior: "behindPlayer",  attackSpeed: 700  },
     hollow:  { id: "hollow",  name: "Hollow",  behavior: "wandering",     attackSpeed: 1500 },
     lurker:  { id: "lurker",  name: "Lurker",  behavior: "backgroundCreep", attackSpeed: 1000 },
-    echo:    { id: "echo",    name: "Echo",    behavior: "uiDistort",     attackSpeed: 800  }
+    echo:    { id: "echo",    name: "Echo",    behavior: "uiDistort",     attackSpeed: 800  },
   };
 
   let dodgeWindow = false;
