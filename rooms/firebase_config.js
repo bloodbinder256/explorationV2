@@ -1,22 +1,21 @@
-/* rooms/firebase_config.js
-   Paste your Firebase Web App config here.
+// rooms/firebase_config.js
 
-   How to get this:
-   Firebase Console → Project Settings → General → Your apps → Web app → Config
-
-   Leave enabled:false until you paste real values.
-*/
-window.FIREBASE_GAME_CONFIG = {
-  enabled: false,
+window.GAME_FIREBASE_CONFIG = {
+  enabled: true,
 
   firebaseConfig: {
-    apiKey: "PASTE_API_KEY_HERE",
-    authDomain: "PASTE_PROJECT_ID.firebaseapp.com",
-    projectId: "PASTE_PROJECT_ID",
-    storageBucket: "PASTE_PROJECT_ID.appspot.com",
-    messagingSenderId: "PASTE_SENDER_ID",
-    appId: "PASTE_APP_ID"
+    apiKey: "AIzaSyAidB97G_wweN9w7c2gJYtP9DlbIc_Bqwk",
+    authDomain: "exploration-cloud.firebaseapp.com",
+    projectId: "exploration-cloud",
+    storageBucket: "exploration-cloud.firebasestorage.app",
+    messagingSenderId: "541321883134",
+    appId: "1:541321883134:web:32343b3e51fb37fdbba4af",
+    measurementId: "G-VS6H9E5X5T"
   },
 
   saveCollection: "playerSaves"
 };
+
+// Compatibility alias.
+// Some versions of cloud_save.js look for this older name.
+window.FIREBASE_GAME_CONFIG = window.GAME_FIREBASE_CONFIG;
