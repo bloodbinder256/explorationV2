@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Endless Requiem — Settings</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="icon" href="data:,">
+</head>
+<body class="fade-in settings-page" data-sanity="high">
+  <div class="vignette"></div>
+  <div class="scanlines"></div>
+  <div class="grain"></div>
+
+  <main class="settings-card">
+    <p class="eyebrow">Options / Comfort / Save Tools</p>
+    <h1 class="title">Settings</h1>
+    <p class="subtitle">Tune the game without touching code. Settings save on this browser.</p>
+
+    <section class="settings-section">
+      <h2>Audio</h2>
+      <label class="setting-row">
+        <span>Mute audio</span>
+        <input id="muted" type="checkbox">
+      </label>
+      <label class="setting-row stacked">
+        <span>Master volume <b id="masterVolumeValue"></b></span>
+        <input id="masterVolume" type="range" min="0" max="100" step="5">
+      </label>
+      <label class="setting-row stacked">
+        <span>Ambient volume <b id="ambientVolumeValue"></b></span>
+        <input id="ambientVolume" type="range" min="0" max="100" step="5">
+      </label>
+    </section>
+
+    <section class="settings-section">
+      <h2>Visuals / UI</h2>
+      <label class="setting-row">
+        <span>Reduced motion / effects</span>
+        <input id="reducedEffects" type="checkbox">
+      </label>
+      <label class="setting-row">
+        <span>Show sanity meter</span>
+        <input id="showSanity" type="checkbox">
+      </label>
+      <label class="setting-row">
+        <span>UI size</span>
+        <select id="uiSize">
+          <option value="small">Small</option>
+          <option value="normal">Normal</option>
+          <option value="large">Large</option>
+        </select>
+      </label>
+      <label class="setting-row">
+        <span>Text speed</span>
+        <select id="textSpeed">
+          <option value="slow">Slow</option>
+          <option value="normal">Normal</option>
+          <option value="fast">Fast</option>
+        </select>
+      </label>
+    </section>
+
+    <section class="settings-section">
+      <h2>Cloud / Save Tools</h2>
+      <label class="setting-row">
+        <span>Auto cloud save placeholder</span>
+        <input id="autoCloudSave" type="checkbox">
+      </label>
+      <p class="settings-help">Auto cloud save is saved as a setting now, so it can be wired into Firebase later without changing the settings page.</p>
+      <div class="settings-actions">
+        <button id="exportSaveBtn" class="btn" type="button">Export Local Save</button>
+        <button id="importSaveBtn" class="btn" type="button">Import Local Save</button>
+        <button id="clearLocalBtn" class="btn danger" type="button">Clear Local Save</button>
+      </div>
+      <textarea id="saveBox" placeholder="Exported/imported save data appears here."></textarea>
+    </section>
+
+    <div class="settings-actions bottom-actions">
+      <button class="btn" onclick="location.href='../index.html'">Title Screen</button>
+      <button class="btn" onclick="history.back()">Back</button>
+    </div>
+  </main>
+
+  <script src="settings.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const settings = GameSettings.load();
+      const ids = ["muted", "masterVolume", "ambientVolume", "reducedEffects", "showSanity", "uiSize", "textSpeed", "autoCloudSave"];
+      const el = (id) => document.getElementById(id);
+
+      function syncUI() {
+        const s = GameSettings.load();
+        el("muted").checked = !!s.muted;
+        el("masterVolume").value = s.masterVolume;
+        el("ambientVolume").value = s.ambientVolume;
+        el("reducedEffects").checked = !!s.reducedEffects;
+        el("showSanity").checked = !!s.showSanity;
+        el("uiSize").value = s.uiSize;
+        el("textSpeed").value = s.textSpeed;
+        el("autoCloudSave").checked = !!s.autoCloudSave;
+        el("masterVolumeValue").textContent = `${s.masterVolume}%`;
+        el("ambientVolumeValue").textContent = `${s.ambientVolume}%`;
+      }
+
+      function readUI() {
+        GameSettings.save({
+          ...GameSettings.load(),
+          muted: el("muted").checked,
+          masterVolume: Number(el("masterVolume").value),
+          ambientVolume: Number(el("ambientVolume").value),
+          reducedEffects: el("reducedEffects").checked,
+          showSanity: el("showSanity").checked,
+          uiSize: el("uiSize").value,
+          textSpeed: el("textSpeed").value,
+          autoCloudSave: el("autoCloudSave").checked
+        });
+        syncUI();
+      }
+
+      ids.forEach(id => el(id)?.addEventListener("input", readUI));
+      ids.forEach(id => el(id)?.addEventListener("change", readUI));
+
+      el("exportSaveBtn").addEventListener("click", async () => {
+        const text = GameSettings.exportSave();
+        el("saveBox").value = text;
+        try { await navigator.clipboard.writeText(text); alert("Save copied to clipboard too."); }
+        catch (_) { alert("Save exported into the box."); }
+      });
+
+      el("importSaveBtn").addEventListener("click", () => {
+        const text = el("saveBox").value.trim();
+        if (!text) return alert("Paste exported save data into the box first.");
+        if (!confirm("Import this save over current local data?")) return;
+        try {
+          GameSettings.importSave(text);
+          alert("Save imported. Return to the title screen or refresh.");
+          syncUI();
+        } catch (err) {
+          alert(`Import failed: ${err.message}`);
+        }
+      });
+
+      el("clearLocalBtn").addEventListener("click", () => {
+        if (!confirm("Clear local save data on this browser? Settings will be kept.")) return;
+        GameSettings.clearLocalSave();
+        alert("Local save cleared. Settings kept.");
+        syncUI();
+      });
+
+      syncUI();
+    });
+  </script>
+</body>
+</html>

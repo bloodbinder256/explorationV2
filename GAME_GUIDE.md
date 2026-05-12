@@ -1275,3 +1275,89 @@ A new achievement was added in `rooms/achievements_config.js`:
 ```
 
 Use `condition: { type: "anyEnding", ids: ["ending_id_1", "ending_id_2"] }` when one trophy should unlock from multiple possible endings.
+
+---
+
+## Settings System
+
+The game now has a settings page:
+
+```txt
+rooms/settings.html
+```
+
+You can open it from the title screen, inventory, or directly:
+
+```txt
+http://localhost:8000/rooms/settings.html
+```
+
+Settings are saved in localStorage under:
+
+```txt
+game_settings_v1
+```
+
+### Settings included
+
+- **Mute audio** — turns game audio off.
+- **Master volume** — controls all game audio volume.
+- **Ambient volume** — controls room/background ambience.
+- **Reduced motion / effects** — disables or greatly reduces flickers, particles, transitions, and other animated effects.
+- **Show sanity meter** — lets you hide the sanity bar without disabling sanity mechanics.
+- **UI size** — small, normal, or large.
+- **Text speed** — saved for future dialogue/typewriter features.
+- **Auto cloud save** — saved as a placeholder setting for future Firebase auto-save wiring.
+- **Export Local Save** — copies/surfaces the player’s local save data.
+- **Import Local Save** — restores local save data from an exported save.
+- **Clear Local Save** — clears local progress but keeps settings.
+
+### Using settings in code
+
+The settings helper is in:
+
+```txt
+rooms/settings.js
+```
+
+Common examples:
+
+```js
+const settings = GameSettings.load();
+```
+
+```js
+GameSettings.get("showSanity");
+```
+
+```js
+GameSettings.set("reducedEffects", true);
+```
+
+```js
+const volume = GameSettings.audioVolume("ambient");
+```
+
+### Hide the sanity meter by default
+
+Open `rooms/settings.js` and change the default:
+
+```js
+showSanity: true
+```
+
+to:
+
+```js
+showSanity: false
+```
+
+### Reduced effects
+
+When reduced effects is on, the page gets this class:
+
+```txt
+settings-reduced-effects
+```
+
+The CSS uses that class to hide particles and reduce animation.

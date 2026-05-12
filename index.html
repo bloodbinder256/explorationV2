@@ -86,6 +86,7 @@
       <button class="btn" id="newBtn">NEW RUN</button>
       <button class="btn" id="accountBtn">ACCOUNT / CLOUD SAVE</button>
       <button class="btn" id="trophiesBtn">TROPHIES</button>
+      <button class="btn" id="settingsBtn">SETTINGS</button>
       <button class="btn danger" id="deleteBtn">DELETE PROGRESS</button>
     </div>
   </div>
@@ -102,6 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const deleteBtn = document.getElementById("deleteBtn");
   const accountBtn = document.getElementById("accountBtn");
   const trophiesBtn = document.getElementById("trophiesBtn");
+  const settingsBtn = document.getElementById("settingsBtn");
 
   function forceTitleVisible() {
     [title, subtitle, menu, bgFade].forEach((el) => {
@@ -254,6 +256,10 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.href = "rooms/trophies.html";
   });
 
+  settingsBtn?.addEventListener("click", () => {
+    window.location.href = "rooms/settings.html";
+  });
+
   /* ---------- DELETE PROGRESS ---------- */
   deleteBtn.addEventListener("click", () => {
     if (!confirm("Delete ALL progress? This cannot be undone.")) return;
@@ -268,6 +274,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
+<script src="rooms/settings.js"></script>
 <script src="rooms/achievements_config.js"></script>
 <script src="rooms/trophies.js"></script>
 </body>

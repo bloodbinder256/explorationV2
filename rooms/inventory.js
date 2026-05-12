@@ -202,6 +202,7 @@ window.refreshInventoryUI = function () {
       <button id="craftingBtn" class="btn" type="button">Craft / Cook</button>
       <button id="trophiesBtn" class="btn" type="button">Trophies</button>
       <button id="accountBtn" class="btn" type="button">Account</button>
+      <button id="settingsBtn" class="btn" type="button">Settings</button>
     </div>
   `;
 
@@ -285,6 +286,11 @@ window.refreshInventoryUI = function () {
   invPanel.querySelector("#accountBtn")?.addEventListener("click", () => {
     const isRoom = window.location.pathname.includes("/rooms/");
     window.location.href = isRoom ? "../account.html" : "account.html";
+  });
+
+  invPanel.querySelector("#settingsBtn")?.addEventListener("click", () => {
+    const isRoom = window.location.pathname.includes("/rooms/");
+    window.location.href = isRoom ? "settings.html" : "rooms/settings.html";
   });
 };
 

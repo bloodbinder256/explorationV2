@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const bgContainer = document.getElementById("bgContainer");
   const audioName = body.dataset.audio;
   const isMuted = localStorage.getItem("gameMuted") === "1";
+  const ambientTargetVolume = () => window.GameSettings?.audioVolume?.("ambient") ?? (isMuted ? 0 : 0.6);
 
   /* ===============================
      BACKGROUND HANDLER
@@ -67,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ambient = new Audio(`../sounds/${audioName}`);
     ambient.loop = true;
     ambient.volume = 0;
-    ambient.muted = isMuted;
+    ambient.muted = isMuted || !!window.GameSettings?.get?.("muted");
 
     ambient.play().then(fadeAudioIn).catch(() => {
       window.addEventListener("click", startAudio, { once: true });
@@ -85,8 +86,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let v = 0;
     const fade = setInterval(() => {
       v += 0.02;
-      ambient.volume = Math.min(0.6, v);
-      if (v >= 0.6) clearInterval(fade);
+      const target = ambientTargetVolume();
+      ambient.volume = Math.min(target, v);
+      if (v >= target) clearInterval(fade);
     }, 50);
   }
 

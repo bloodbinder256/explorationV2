@@ -54,14 +54,7 @@ function getFirebaseGameConfig() {
 
 function configReady() {
   const cfg = getFirebaseGameConfig();
-
-  return !!(
-    cfg &&
-    cfg.enabled === true &&
-    cfg.firebaseConfig &&
-    cfg.firebaseConfig.apiKey &&
-    !cfg.firebaseConfig.apiKey.includes("PASTE_")
-  );
+  return !!(cfg?.enabled && cfg?.firebaseConfig?.apiKey && !cfg.firebaseConfig.apiKey.includes("PASTE_"));
 }
 
 function setSignedOutUI() {
