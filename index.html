@@ -84,6 +84,8 @@
     <div class="menu-buttons">
       <button class="btn" id="continueBtn">CONTINUE</button>
       <button class="btn" id="newBtn">NEW RUN</button>
+      <button class="btn" id="accountBtn">ACCOUNT / CLOUD SAVE</button>
+      <button class="btn" id="trophiesBtn">TROPHIES</button>
       <button class="btn danger" id="deleteBtn">DELETE PROGRESS</button>
     </div>
   </div>
@@ -98,6 +100,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const continueBtn = document.getElementById("continueBtn");
   const newBtn = document.getElementById("newBtn");
   const deleteBtn = document.getElementById("deleteBtn");
+  const accountBtn = document.getElementById("accountBtn");
+  const trophiesBtn = document.getElementById("trophiesBtn");
 
   function forceTitleVisible() {
     [title, subtitle, menu, bgFade].forEach((el) => {
@@ -242,6 +246,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  accountBtn?.addEventListener("click", () => {
+    window.location.href = "account.html";
+  });
+
+  trophiesBtn?.addEventListener("click", () => {
+    window.location.href = "rooms/trophies.html";
+  });
+
   /* ---------- DELETE PROGRESS ---------- */
   deleteBtn.addEventListener("click", () => {
     if (!confirm("Delete ALL progress? This cannot be undone.")) return;
@@ -256,5 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
+<script src="rooms/achievements_config.js"></script>
+<script src="rooms/trophies.js"></script>
 </body>
 </html>

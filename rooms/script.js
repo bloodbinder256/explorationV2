@@ -414,6 +414,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function applyContentResult(result = {}, reasonPrefix = "content") {
     if (result.setFlag) setContentFlag(result.setFlag, true);
+    window.Trophies?.trackContentChoice?.(reasonPrefix.startsWith("entity_") ? "entity" : "dialogue");
 
     if (result.itemReward && window.Inventory?.add) {
       Inventory.add(result.itemReward, result.itemRewardAmount || 1);

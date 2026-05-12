@@ -200,6 +200,8 @@ window.refreshInventoryUI = function () {
 
     <div class="inventory-footer">
       <button id="craftingBtn" class="btn" type="button">Craft / Cook</button>
+      <button id="trophiesBtn" class="btn" type="button">Trophies</button>
+      <button id="accountBtn" class="btn" type="button">Account</button>
     </div>
   `;
 
@@ -275,6 +277,15 @@ window.refreshInventoryUI = function () {
     if (current !== "crafting.html") localStorage.setItem("lastRoom", current);
     window.location.href = "crafting.html";
   });
+
+  invPanel.querySelector("#trophiesBtn")?.addEventListener("click", () => {
+    window.location.href = "trophies.html";
+  });
+
+  invPanel.querySelector("#accountBtn")?.addEventListener("click", () => {
+    const isRoom = window.location.pathname.includes("/rooms/");
+    window.location.href = isRoom ? "../account.html" : "account.html";
+  });
 };
 
 /* ============================
@@ -330,6 +341,7 @@ window.pickupItem = function(itemId, amount = 1) {
   }
 
   Inventory.add(itemId, amount);
+  window.Trophies?.trackPickup?.(itemId, amount);
   if (pickupSaveId) savePickedUpItem(pickupSaveId);
 
   const label = amount > 1 ? `${amount}x ${item.name}` : item.name;

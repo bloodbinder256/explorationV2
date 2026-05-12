@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Endless Requiem — Account</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:,">
+</head>
+<body class="fade-in account-page" data-sanity="high">
+  <div class="vignette"></div>
+  <div class="scanlines"></div>
+  <div class="grain"></div>
+
+  <main class="account-card">
+    <p class="eyebrow">Account / Cloud Save</p>
+    <h1 class="title">Player Account</h1>
+    <p class="subtitle">Sign in with Firebase to save and load progress across browsers/devices.</p>
+
+    <div id="accountStatus" class="account-status">Checking Firebase config...</div>
+
+    <section id="accountSignedOut" class="account-section">
+      <label>Email</label>
+      <input id="emailInput" type="email" placeholder="you@example.com" autocomplete="email">
+
+      <label>Password</label>
+      <input id="passwordInput" type="password" placeholder="Password" autocomplete="current-password">
+
+      <div class="account-actions">
+        <button id="loginBtn" class="btn" data-needs-firebase>Sign In</button>
+        <button id="signupBtn" class="btn" data-needs-firebase>Create Account</button>
+      </div>
+    </section>
+
+    <section id="accountSignedIn" class="account-section hidden">
+      <p>Signed in as <strong id="accountEmail"></strong></p>
+      <div class="account-actions">
+        <button id="saveCloudBtn" class="btn">Save to Cloud</button>
+        <button id="loadCloudBtn" class="btn">Load from Cloud</button>
+        <button id="logoutBtn" class="btn danger">Sign Out</button>
+      </div>
+    </section>
+
+    <section class="account-help">
+      <h2>Firebase setup reminder</h2>
+      <p>Open <code>rooms/firebase_config.js</code>, paste your Firebase Web App config, and set <code>enabled: true</code>.</p>
+    </section>
+
+    <div class="account-actions">
+      <button class="btn" onclick="location.href='index.html'">Title Screen</button>
+      <button class="btn" onclick="location.href='rooms/trophies.html'">Trophies</button>
+    </div>
+  </main>
+
+  <script src="rooms/firebase_config.js"></script>
+  <script src="rooms/achievements_config.js"></script>
+  <script src="rooms/trophies.js"></script>
+  <script type="module" src="rooms/cloud_save.js"></script>
+</body>
+</html>

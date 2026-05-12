@@ -1815,3 +1815,173 @@ html body .inv-count {
     max-height: calc(100vh - 290px);
   }
 }
+
+/* ============================
+   ACCOUNT / CLOUD SAVE PAGE
+   ============================ */
+.account-page,
+.trophies-page {
+  overflow-y: auto;
+}
+
+.account-card,
+.trophies-card {
+  width: min(920px, calc(100vw - 34px));
+  margin: 6vh auto;
+  position: relative;
+  z-index: 5;
+  padding: 30px;
+  border-radius: 30px;
+  border: 1px solid rgba(220,231,255,.18);
+  background: linear-gradient(180deg, rgba(18,26,48,.78), rgba(7,11,24,.86));
+  box-shadow: var(--shadow), inset 0 0 60px rgba(191,202,255,.05);
+  backdrop-filter: blur(14px);
+}
+
+.account-section,
+.account-help {
+  margin: 18px 0;
+  padding: 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(220,231,255,.14);
+  background: rgba(255,255,255,.04);
+}
+
+.account-section label {
+  display: block;
+  margin: 12px 0 6px;
+  color: var(--accent-2);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-size: .78rem;
+}
+
+.account-section input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(220,231,255,.22);
+  background: rgba(8,12,24,.78);
+  color: var(--ink);
+  font-family: inherit;
+}
+
+.account-status {
+  margin: 18px 0;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(198,255,242,.22);
+  color: var(--muted);
+  background: rgba(198,255,242,.05);
+}
+
+.account-status.error {
+  border-color: rgba(240,107,142,.36);
+  background: rgba(240,107,142,.08);
+  color: #ffd8e1;
+}
+
+.account-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.account-help code {
+  color: var(--accent-2);
+}
+
+/* ============================
+   TROPHY PAGE / TOAST
+   ============================ */
+.trophy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+  margin: 24px 0;
+}
+
+.trophy-card {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(220,231,255,.12);
+  background: rgba(255,255,255,.04);
+  opacity: .66;
+}
+
+.trophy-card.unlocked {
+  opacity: 1;
+  border-color: rgba(198,255,242,.3);
+  background: radial-gradient(circle at top left, rgba(198,255,242,.08), rgba(255,255,255,.04));
+}
+
+.trophy-icon {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  background: rgba(255,255,255,.06);
+  font-size: 1.7rem;
+}
+
+.trophy-card h2 {
+  color: white;
+  font-size: 1.05rem;
+  margin-bottom: 6px;
+}
+
+.trophy-card p {
+  color: var(--muted);
+  line-height: 1.45;
+  margin-bottom: 8px;
+}
+
+.trophy-card small {
+  color: var(--accent-2);
+  opacity: .76;
+}
+
+.trophy-toast {
+  position: fixed;
+  right: 20px;
+  bottom: 24px;
+  z-index: 4000;
+  max-width: min(360px, calc(100vw - 40px));
+  padding: 13px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(198,255,242,.32);
+  background: rgba(7,11,24,.92);
+  color: white;
+  box-shadow: 0 14px 34px rgba(0,0,0,.35), 0 0 24px rgba(198,255,242,.08);
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity .25s ease, transform .25s ease;
+}
+
+.trophy-toast.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.inventory-footer {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+@media (max-width: 680px) {
+  .account-card,
+  .trophies-card {
+    padding: 20px;
+    margin: 3vh auto;
+  }
+
+  .account-actions {
+    flex-direction: column;
+  }
+}

@@ -50,6 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const item = ITEMS_BY_ID[recipe.output.id];
     const verb = recipeStation(recipe) === "cooking" ? "Cooked" : "Crafted";
     window.showMessage?.(`${verb} ${recipe.output.amount}x ${item?.name || recipe.output.id}`);
+    window.Trophies?.trackCraft?.(recipe);
     renderRecipes();
   }
 

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Endless Requiem — Trophies</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="icon" href="data:,">
+</head>
+<body class="fade-in trophies-page" data-sanity="high">
+  <div class="vignette"></div>
+  <div class="scanlines"></div>
+  <div class="grain"></div>
+
+  <main class="trophies-card">
+    <p class="eyebrow">Achievements</p>
+    <h1 class="title">Trophies</h1>
+    <p id="trophySummary" class="subtitle">Loading trophies...</p>
+    <section id="trophyGrid" class="trophy-grid"></section>
+
+    <div class="account-actions">
+      <button class="btn" onclick="history.back()">Back</button>
+      <button class="btn" onclick="location.href='../account.html'">Account</button>
+      <button class="btn danger" onclick="if(confirm('Reset trophies only?')) { Trophies.reset(); location.reload(); }">Reset Trophies</button>
+    </div>
+  </main>
+
+  <script src="../rooms/items.js"></script>
+  <script src="../rooms/inventory.js"></script>
+  <script src="../rooms/sanity.js"></script>
+  <script src="../rooms/achievements_config.js"></script>
+  <script src="../rooms/trophies.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const list = Trophies.list();
+      const unlocked = list.filter(t => t.unlocked).length;
+      document.getElementById("trophySummary").textContent = `${unlocked}/${list.length} unlocked`;
+      const grid = document.getElementById("trophyGrid");
+      grid.innerHTML = list.map(t => `
+        <article class="trophy-card ${t.unlocked ? 'unlocked' : 'locked'}">
+          <div class="trophy-icon">${t.unlocked ? (t.icon || '🏆') : '🔒'}</div>
+          <div>
+            <h2>${t.name}</h2>
+            <p>${t.description || ''}</p>
+            <small>${t.unlocked && t.date ? 'Unlocked ' + new Date(t.date).toLocaleString() : 'Locked'}</small>
+          </div>
+        </article>
+      `).join("");
+    });
+  </script>
+</body>
+</html>

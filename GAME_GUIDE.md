@@ -1090,3 +1090,169 @@ A good order is:
 6. Test again.
 
 That makes bugs much easier to find.
+
+---
+
+## 16. Firebase Accounts and Cloud Saves
+
+The game now has a Firebase-ready account system.
+
+Important files:
+
+```txt
+account.html                  Account/login page
+rooms/firebase_config.js       Firebase config placeholder
+rooms/cloud_save.js            Sign in, sign up, cloud save, cloud load
+```
+
+### How to Enable Firebase
+
+1. Go to the Firebase Console.
+2. Create a project.
+3. Add a **Web App** to the project.
+4. Copy the Firebase config object.
+5. Open:
+
+```txt
+rooms/firebase_config.js
+```
+
+6. Paste your config into `firebaseConfig`.
+7. Change:
+
+```js
+enabled: false
+```
+
+to:
+
+```js
+enabled: true
+```
+
+8. In Firebase, enable **Authentication → Email/Password**.
+9. Enable **Firestore Database**.
+
+### Firestore Rules for Testing
+
+For early testing only, you can use rules like this so signed-in players can only read/write their own save:
+
+```js
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /playerSaves/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
+```
+
+### What Cloud Save Stores
+
+Cloud save uploads the same browser save keys the game already uses:
+
+```txt
+inventory
+sanity_v1
+pickedUpItems_v1
+gameProgress_v1
+content_flags_v1
+lastRoom
+lastEnding_v1
+trophies_v2
+trophy_stats_v1
+dialogue_used_...
+entity_seen_...
+rested_...
+ritual_...
+```
+
+The game still works without Firebase. Firebase only adds account sign-in and cloud saving.
+
+---
+
+## 17. Achievements / Trophies
+
+Important files:
+
+```txt
+rooms/achievements_config.js   Easy trophy definitions
+rooms/trophies.js              Trophy system logic
+rooms/trophies.html            Trophy display page
+```
+
+### Add a Trophy
+
+Open:
+
+```txt
+rooms/achievements_config.js
+```
+
+Add a new object inside `window.ACHIEVEMENTS`:
+
+```js
+{
+  id: "found_lavender",
+  name: "A Softer Scent",
+  icon: "🌿",
+  description: "Pick up lavender.",
+  condition: { type: "item", id: "lavender" }
+}
+```
+
+### Trophy Condition Types
+
+Unlock when a stat reaches a number:
+
+```js
+condition: { type: "stat", stat: "pickups", min: 5 }
+```
+
+Unlock when the player has an item:
+
+```js
+condition: { type: "item", id: "silver_key" }
+```
+
+Unlock when a story flag exists:
+
+```js
+condition: { type: "flag", id: "respected_veiled_child" }
+```
+
+Unlock when sanity is high or low:
+
+```js
+condition: { type: "sanity", min: 90 }
+condition: { type: "sanity", max: 20 }
+```
+
+Unlock when a room has been visited:
+
+```js
+condition: { type: "room", room: "attic.html" }
+```
+
+Unlock when an ending has been reached:
+
+```js
+condition: { type: "ending", id: "silver_release" }
+```
+
+### Manually Unlock a Trophy from Code
+
+```js
+Trophies.unlock("my_trophy_id");
+```
+
+### Reset Trophies
+
+Go to:
+
+```txt
+rooms/trophies.html
+```
+
+and click **Reset Trophies**.
