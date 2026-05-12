@@ -49,7 +49,7 @@ function applyLocalSave(save) {
 }
 
 function configReady() {
-  const cfg = window.GAME_FIREBASE_CONFIG;
+  const cfg = window.FIREBASE_GAME_CONFIG;
   return !!(cfg?.enabled && cfg?.firebaseConfig?.apiKey && !cfg.firebaseConfig.apiKey.includes("PASTE_"));
 }
 
@@ -84,10 +84,10 @@ async function bootFirebaseAccount() {
     } = await import("https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js");
     const { getFirestore, doc, setDoc, getDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js");
 
-    const app = initializeApp(window.GAME_FIREBASE_CONFIG.firebaseConfig);
+    const app = initializeApp(window.FIREBASE_GAME_CONFIG.firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    const collection = window.GAME_FIREBASE_CONFIG.saveCollection || "playerSaves";
+    const collection = window.FIREBASE_GAME_CONFIG.saveCollection || "playerSaves";
 
     function currentUserOrThrow() {
       const user = auth.currentUser;

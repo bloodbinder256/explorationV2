@@ -103,4 +103,14 @@ window.ACHIEVEMENTS = [
     description: "Earn the Silver Release ending.",
     condition: { type: "ending", id: "silver_release" }
   }
+
+  ,
+  {
+    id: "house_always_wins",
+    name: "The House Always Wins",
+    icon: "♠️",
+    description: "Reach an ending where the house gets the final word.",
+    condition: { type: "anyEnding", ids: ["the_house_keeps_you", "hostile_house"] }
+  }
+
 ];

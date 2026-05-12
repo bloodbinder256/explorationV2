@@ -87,6 +87,8 @@
       }
       case "ending":
         return (s.endings || []).includes(condition.id);
+      case "anyEnding":
+        return (condition.ids || []).some(id => (s.endings || []).includes(id));
       default:
         return false;
     }

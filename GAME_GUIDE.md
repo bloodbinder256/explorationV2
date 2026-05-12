@@ -1256,3 +1256,22 @@ rooms/trophies.html
 ```
 
 and click **Reset Trophies**.
+
+
+## V19 Note: Trophy Page Scroll + “The House Always Wins”
+
+The trophies page has its own scroll override so it can show long achievement lists without being clipped by the room-page layout.
+
+A new achievement was added in `rooms/achievements_config.js`:
+
+```js
+{
+  id: "house_always_wins",
+  name: "The House Always Wins",
+  icon: "♠️",
+  description: "Reach an ending where the house gets the final word.",
+  condition: { type: "anyEnding", ids: ["the_house_keeps_you", "hostile_house"] }
+}
+```
+
+Use `condition: { type: "anyEnding", ids: ["ending_id_1", "ending_id_2"] }` when one trophy should unlock from multiple possible endings.

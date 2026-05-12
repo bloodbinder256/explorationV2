@@ -6,6 +6,31 @@
   <title>Endless Requiem — Trophies</title>
   <link rel="stylesheet" href="../styles.css" />
   <link rel="icon" href="data:,">
+  <style id="trophies-scroll-fix">
+    html,
+    body.trophies-page {
+      height: auto !important;
+      min-height: 100% !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+    }
+
+    body.trophies-page {
+      padding: 24px 0 60px;
+    }
+
+    body.trophies-page .trophies-card {
+      margin-top: 4vh !important;
+      margin-bottom: 8vh !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+
+    body.trophies-page .trophy-grid {
+      max-height: none !important;
+      overflow: visible !important;
+    }
+  </style>
 </head>
 <body class="fade-in trophies-page" data-sanity="high">
   <div class="vignette"></div>
@@ -25,9 +50,6 @@
     </div>
   </main>
 
-  <script src="../rooms/items.js"></script>
-  <script src="../rooms/inventory.js"></script>
-  <script src="../rooms/sanity.js"></script>
   <script src="../rooms/achievements_config.js"></script>
   <script src="../rooms/trophies.js"></script>
   <script>
