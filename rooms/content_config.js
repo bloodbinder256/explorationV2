@@ -29,6 +29,14 @@
    - imagePosition: "left" or "right"
    - imageFit: "cover" or "contain"
    - option.swapImage: change the portrait after choosing that option
+
+   Creature voice settings:
+   - voice.pitch: higher/lower gibberish voice
+   - voice.speed: faster/slower chatter
+   - voice.volume: 0 to 1
+   - voice.texture: "soft", "airy", "rough", or "thin"
+   - option.voice: overrides the creature voice for that one choice
+   - option.voiceText: alternate text used only for the sound
 */
 
 window.ROOM_DIALOGUES = {
@@ -155,6 +163,13 @@ window.ENTITY_ENCOUNTERS = {
     imageAlt: "A veiled child standing at the end of the hallway",
     imagePosition: "left",
     imageFit: "cover",
+    voice: {
+      enabled: true,
+      pitch: 1.45,
+      speed: 1.15,
+      volume: 0.45,
+      texture: "soft"
+    },
     subtitle: "A small figure stands at the far end of the hall, face hidden by something too thin to be cloth.",
     prompt: "It raises one hand. Not a wave. Not a warning. A question.",
     options: [
@@ -189,6 +204,13 @@ window.ENTITY_ENCOUNTERS = {
     imageAlt: "A moonlit woman in a silver gown",
     imagePosition: "right",
     imageFit: "cover",
+    voice: {
+      enabled: true,
+      pitch: 1.05,
+      speed: 0.9,
+      volume: 0.42,
+      texture: "airy"
+    },
     subtitle: "A woman made of moonlight sits where the room is darkest. Her hair floats as though underwater.",
     prompt: "She looks at the music box, then at you, and waits.",
     options: [
@@ -226,6 +248,13 @@ window.ENTITY_ENCOUNTERS = {
     imageAlt: "A tall keeper folding paper birds in the attic",
     imagePosition: "left",
     imageFit: "cover",
+    voice: {
+      enabled: true,
+      pitch: 0.55,
+      speed: 0.75,
+      volume: 0.6,
+      texture: "rough"
+    },
     subtitle: "Something tall kneels beneath the rafters, folding scraps of old paper into birds.",
     prompt: "It does not look hostile. It looks busy. It offers you one paper bird.",
     options: [
@@ -261,6 +290,13 @@ window.ENTITY_ENCOUNTERS = {
     imageAlt: "A face suggested by snow and frost",
     imagePosition: "right",
     imageFit: "cover",
+    voice: {
+      enabled: true,
+      pitch: 1.25,
+      speed: 0.85,
+      volume: 0.35,
+      texture: "thin"
+    },
     subtitle: "The falling snow arranges itself into words only when you stop trying to read them.",
     prompt: "A voice presses softly against the glass from the wrong side of the weather.",
     options: [

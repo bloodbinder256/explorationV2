@@ -450,6 +450,126 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+
+  /* ===============================
+     CREATURE GIBBERISH VOICES
+     Bundled Web Audio "animalese-style" chatter.
+     No external downloads needed.
+  =============================== */
+  let creatureVoiceContext = null;
+  let creatureVoiceStopTimer = null;
+
+  function getGameSettingsForVoice() {
+    try {
+      return JSON.parse(localStorage.getItem("game_settings_v1") || "{}");
+    } catch (_) {
+      return {};
+    }
+  }
+
+  function creatureVoicesEnabled() {
+    const settings = getGameSettingsForVoice();
+    if (settings.creatureVoices === false) return false;
+    if (localStorage.getItem("creatureVoicesEnabled") === "false") return false;
+    return true;
+  }
+
+  function cleanCreatureVoiceText(text) {
+    return String(text || "")
+      .replace(/<[^>]*>/g, " ")
+      .replace(/[“”]/g, '"')
+      .replace(/[‘’]/g, "'")
+      .replace(/[^a-zA-Z\s]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 260);
+  }
+
+  function getAudioContext() {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return null;
+    if (!creatureVoiceContext) creatureVoiceContext = new AudioCtx();
+    if (creatureVoiceContext.state === "suspended") creatureVoiceContext.resume().catch(() => {});
+    return creatureVoiceContext;
+  }
+
+  function textureWave(texture) {
+    if (texture === "rough") return "sawtooth";
+    if (texture === "thin") return "triangle";
+    if (texture === "airy") return "sine";
+    return "square";
+  }
+
+  function playCreatureGibberish(text, voice = {}) {
+    if (!creatureVoicesEnabled()) return;
+
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    const clean = cleanCreatureVoiceText(text);
+    if (!clean) return;
+
+    if (creatureVoiceStopTimer) clearTimeout(creatureVoiceStopTimer);
+
+    const settings = getGameSettingsForVoice();
+    const globalVolume = Math.max(0, Math.min(1, Number(settings.creatureVoiceVolume ?? 70) / 100));
+    const pitch = Math.max(0.25, Math.min(2.5, Number(voice.pitch ?? 1)));
+    const speed = Math.max(0.35, Math.min(2.5, Number(voice.speed ?? 1)));
+    const volume = Math.max(0, Math.min(1, Number(voice.volume ?? 0.45))) * globalVolume;
+    const waveType = textureWave(voice.texture || "soft");
+
+    const now = ctx.currentTime + 0.02;
+    const letters = clean.toLowerCase().replace(/[^a-z]/g, "").split("").slice(0, 120);
+    const step = 0.055 / speed;
+    const noteLength = Math.max(0.025, step * 0.72);
+    const base = 210 * pitch;
+
+    // Master envelope
+    const master = ctx.createGain();
+    master.gain.setValueAtTime(0.0001, now);
+    master.gain.linearRampToValueAtTime(volume, now + 0.025);
+    master.connect(ctx.destination);
+
+    letters.forEach((ch, i) => {
+      const code = ch.charCodeAt(0) - 97;
+      const t = now + i * step;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+
+      const vowelish = "aeiou".includes(ch);
+      const wobble = ((code % 7) - 3) * 13;
+      const freq = base + (code % 10) * 22 + wobble + (vowelish ? 44 : 0);
+
+      osc.type = waveType;
+      osc.frequency.setValueAtTime(freq, t);
+      osc.frequency.exponentialRampToValueAtTime(Math.max(45, freq * (vowelish ? 1.08 : 0.94)), t + noteLength);
+
+      filter.type = "bandpass";
+      filter.frequency.setValueAtTime(650 + (code % 8) * 120, t);
+      filter.Q.setValueAtTime(3.5, t);
+
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.linearRampToValueAtTime(0.9, t + 0.006);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + noteLength);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(master);
+      osc.start(t);
+      osc.stop(t + noteLength + 0.015);
+    });
+
+    const endTime = now + letters.length * step + 0.12;
+    master.gain.setValueAtTime(volume, Math.max(now, endTime - 0.08));
+    master.gain.exponentialRampToValueAtTime(0.0001, endTime);
+    creatureVoiceStopTimer = setTimeout(() => {
+      try { master.disconnect(); } catch (_) {}
+    }, Math.ceil((endTime - ctx.currentTime) * 1000) + 120);
+  }
+
+  window.playCreatureGibberish = playCreatureGibberish;
+
   /* ===============================
      ENTITY ENCOUNTERS
   =============================== */
@@ -534,6 +654,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         responseBox.innerHTML = `<strong>${option.label}:</strong> ${option.response || "The room remembers your answer."}`;
+
+        const spokenLine = option.voiceText || option.response || option.label;
+        const voice = option.voice || encounter.voice || {};
+        playCreatureGibberish(spokenLine, voice);
+
         applyContentResult(option, `entity_${encounter.id || room}`);
         panel.querySelectorAll('.entity-option').forEach(b => b.disabled = true);
       });

@@ -1401,3 +1401,66 @@ service cloud.firestore {
   }
 }
 ```
+
+
+## Creature Gibberish Voices
+
+Creature/entity encounters can play expressive gibberish when a creature response appears. This uses a bundled Web Audio helper, so you do not need real voice acting.
+
+Edit creature voices in:
+
+```txt
+rooms/content_config.js
+```
+
+Inside an entity encounter, add or edit the `voice` block:
+
+```js
+voice: {
+  enabled: true,
+  pitch: 1.45,
+  speed: 1.15,
+  volume: 0.45,
+  texture: "soft"
+}
+```
+
+Good starting values:
+
+```js
+// small / childlike
+voice: { pitch: 1.45, speed: 1.15, volume: 0.45, texture: "soft" }
+
+// elegant / ghostly
+voice: { pitch: 1.05, speed: 0.9, volume: 0.42, texture: "airy" }
+
+// large / heavy
+voice: { pitch: 0.55, speed: 0.75, volume: 0.6, texture: "rough" }
+
+// thin / icy
+voice: { pitch: 1.25, speed: 0.85, volume: 0.35, texture: "thin" }
+```
+
+A single option can override the entity voice:
+
+```js
+{
+  label: "Threaten it",
+  response: "The veil snaps toward you like a sheet in storm wind.",
+  sanity: -5,
+  setFlag: "angered_veiled_child",
+  voice: { pitch: 1.8, speed: 1.45, volume: 0.7, texture: "rough" }
+}
+```
+
+You can also make the creature voice say different hidden text than the visible response:
+
+```js
+voiceText: "I remember you I remember you I remember you"
+```
+
+Players can turn creature gibberish voices on/off in:
+
+```txt
+rooms/settings.html
+```

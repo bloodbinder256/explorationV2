@@ -9,6 +9,8 @@
     showSanity: true,
     uiSize: "normal",
     textSpeed: "normal",
+    creatureVoices: true,
+    creatureVoiceVolume: 70,
     autoCloudSave: false
   };
 

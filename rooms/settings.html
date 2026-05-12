@@ -31,6 +31,14 @@
         <span>Ambient volume <b id="ambientVolumeValue"></b></span>
         <input id="ambientVolume" type="range" min="0" max="100" step="5">
       </label>
+      <label class="setting-row">
+        <span>Creature gibberish voices</span>
+        <input id="creatureVoices" type="checkbox">
+      </label>
+      <label class="setting-row stacked">
+        <span>Creature voice volume <b id="creatureVoiceVolumeValue"></b></span>
+        <input id="creatureVoiceVolume" type="range" min="0" max="100" step="5">
+      </label>
     </section>
 
     <section class="settings-section">
@@ -86,7 +94,7 @@
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const settings = GameSettings.load();
-      const ids = ["muted", "masterVolume", "ambientVolume", "reducedEffects", "showSanity", "uiSize", "textSpeed", "autoCloudSave"];
+      const ids = ["muted", "masterVolume", "ambientVolume", "creatureVoices", "creatureVoiceVolume", "reducedEffects", "showSanity", "uiSize", "textSpeed", "autoCloudSave"];
       const el = (id) => document.getElementById(id);
 
       function syncUI() {
@@ -94,6 +102,8 @@
         el("muted").checked = !!s.muted;
         el("masterVolume").value = s.masterVolume;
         el("ambientVolume").value = s.ambientVolume;
+        el("creatureVoices").checked = s.creatureVoices !== false;
+        el("creatureVoiceVolume").value = s.creatureVoiceVolume ?? 70;
         el("reducedEffects").checked = !!s.reducedEffects;
         el("showSanity").checked = !!s.showSanity;
         el("uiSize").value = s.uiSize;
@@ -101,6 +111,7 @@
         el("autoCloudSave").checked = !!s.autoCloudSave;
         el("masterVolumeValue").textContent = `${s.masterVolume}%`;
         el("ambientVolumeValue").textContent = `${s.ambientVolume}%`;
+        el("creatureVoiceVolumeValue").textContent = `${s.creatureVoiceVolume ?? 70}%`;
       }
 
       function readUI() {
@@ -109,6 +120,8 @@
           muted: el("muted").checked,
           masterVolume: Number(el("masterVolume").value),
           ambientVolume: Number(el("ambientVolume").value),
+          creatureVoices: el("creatureVoices").checked,
+          creatureVoiceVolume: Number(el("creatureVoiceVolume").value),
           reducedEffects: el("reducedEffects").checked,
           showSanity: el("showSanity").checked,
           uiSize: el("uiSize").value,
