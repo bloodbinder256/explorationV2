@@ -6,3 +6,7 @@ My exploration horror game, Starting at 11/24/25
 
 See [GAME_GUIDE.md](GAME_GUIDE.md) for instructions on customizing rooms, items, crafting, creatures, endings, and GitHub updates.
 
+
+## Maintenance Notes
+
+See [CLEANUP_REPORT.md](CLEANUP_REPORT.md) for the latest cleanup and optimization notes.

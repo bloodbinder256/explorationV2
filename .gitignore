@@ -1,0 +1,22 @@
+# OS/editor clutter
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
+*.bak
+
+# Local dependencies/build outputs
+node_modules/
+dist/
+build/
+.cache/
+
+# Private Firebase/admin files — never commit these
+serviceAccountKey.json
+*.private.json
+.env
+.env.*
+
+# Local logs
+*.log
+npm-debug.log*

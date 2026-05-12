@@ -63,6 +63,83 @@
     apply(load());
   }
 
+
+
+  function initSettingsPage() {
+    const root = document.querySelector(".settings-card");
+    if (!root) return;
+
+    const ids = ["muted", "masterVolume", "ambientVolume", "creatureVoices", "creatureVoiceVolume", "reducedEffects", "showSanity", "uiSize", "textSpeed", "autoCloudSave"];
+    const el = (id) => document.getElementById(id);
+
+    function syncUI() {
+      const s = load();
+      if (!el("muted")) return;
+      el("muted").checked = !!s.muted;
+      el("masterVolume").value = s.masterVolume;
+      el("ambientVolume").value = s.ambientVolume;
+      el("creatureVoices").checked = s.creatureVoices !== false;
+      el("creatureVoiceVolume").value = s.creatureVoiceVolume ?? 70;
+      el("reducedEffects").checked = !!s.reducedEffects;
+      el("showSanity").checked = !!s.showSanity;
+      el("uiSize").value = s.uiSize;
+      el("textSpeed").value = s.textSpeed;
+      el("autoCloudSave").checked = !!s.autoCloudSave;
+      el("masterVolumeValue").textContent = `${s.masterVolume}%`;
+      el("ambientVolumeValue").textContent = `${s.ambientVolume}%`;
+      el("creatureVoiceVolumeValue").textContent = `${s.creatureVoiceVolume ?? 70}%`;
+    }
+
+    function readUI() {
+      save({
+        ...load(),
+        muted: el("muted").checked,
+        masterVolume: Number(el("masterVolume").value),
+        ambientVolume: Number(el("ambientVolume").value),
+        creatureVoices: el("creatureVoices").checked,
+        creatureVoiceVolume: Number(el("creatureVoiceVolume").value),
+        reducedEffects: el("reducedEffects").checked,
+        showSanity: el("showSanity").checked,
+        uiSize: el("uiSize").value,
+        textSpeed: el("textSpeed").value,
+        autoCloudSave: el("autoCloudSave").checked
+      });
+      syncUI();
+    }
+
+    ids.forEach(id => el(id)?.addEventListener("input", readUI));
+    ids.forEach(id => el(id)?.addEventListener("change", readUI));
+
+    el("exportSaveBtn")?.addEventListener("click", async () => {
+      const text = exportSave();
+      el("saveBox").value = text;
+      try { await navigator.clipboard.writeText(text); alert("Save copied to clipboard too."); }
+      catch (_) { alert("Save exported into the box."); }
+    });
+
+    el("importSaveBtn")?.addEventListener("click", () => {
+      const text = el("saveBox").value.trim();
+      if (!text) return alert("Paste exported save data into the box first.");
+      if (!confirm("Import this save over current local data?")) return;
+      try {
+        importSave(text);
+        alert("Save imported. Return to the title screen or refresh.");
+        syncUI();
+      } catch (err) {
+        alert(`Import failed: ${err.message}`);
+      }
+    });
+
+    el("clearLocalBtn")?.addEventListener("click", () => {
+      if (!confirm("Clear local save data on this browser? Settings will be kept.")) return;
+      clearLocalSave();
+      alert("Local save cleared. Settings kept.");
+      syncUI();
+    });
+
+    syncUI();
+  }
+
   window.GameSettings = {
     KEY,
     defaults,
@@ -87,9 +164,14 @@
     }
   };
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => apply(load()));
-  } else {
+  function init() {
     apply(load());
+    initSettingsPage();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
   }
 })();

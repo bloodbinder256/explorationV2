@@ -318,7 +318,8 @@ window.ENTITY_ENCOUNTERS = {
       }
     ]
   },
-      "entitytest.html": {
+
+  "entitytest.html": {
   id: "test",
   chance: 1,
   repeats: false,
@@ -332,6 +333,14 @@ window.ENTITY_ENCOUNTERS = {
 
   subtitle: "A short atmospheric description.",
   prompt: "What does it want from the player?",
+
+  voice: {
+    enabled: true,
+    pitch: 1.45,
+    speed: 1.15,
+    volume: 0.45,
+    texture: "soft"
+  },
 
   options: [
     {
@@ -347,14 +356,7 @@ window.ENTITY_ENCOUNTERS = {
       setFlag: "attacked_creature",
       swapImage: "../images/entities/creature_angry.png"
     }
-   ]
-   voice: {
-  enabled: true,
-  pitch: 1.45,
-  speed: 1.15,
-  volume: 0.45,
-  texture: "soft"
-}
+  ]
 }
 };
 
