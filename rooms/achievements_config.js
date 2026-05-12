@@ -77,9 +77,10 @@ window.ACHIEVEMENTS = [
   },
   {
     id: "clear_mind",
-    title: "Clear Mind",
-    description: "Recover your sanity after the house has shaken you.",
-    condition: { type: "statAtLeast", stat: "sanityRestored", amount: 10 }
+    name: "Clear Mind",
+    icon: "💠",
+    description: "Restore your sanity after the house has shaken you.",
+    condition: { type: "flag", id: "clear_mind_earned" }
   },
   {
     id: "near_breaking",

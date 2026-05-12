@@ -77,6 +77,24 @@
     change(delta, reason) {
       const before = load();
       const after = this.set(before + delta, reason);
+    
+      // Track that sanity was actually lost first.
+      if (delta < 0 && after < 90) {
+        localStorage.setItem("clear_mind_was_shaken_v1", "1");
+      }
+
+      // Clear Mind only unlocks after sanity was lost, then restored high again.
+      if (
+        delta > 0 &&
+        after >= 90 &&
+        localStorage.getItem("clear_mind_was_shaken_v1") === "1"
+      ) {
+        const flags = JSON.parse(localStorage.getItem("content_flags_v1") || "{}");
+        flags.clear_mind_earned = true;
+        localStorage.setItem("content_flags_v1", JSON.stringify(flags));
+        window.Trophies?.checkAll?.();
+      }
+
       return after;
     },
 
