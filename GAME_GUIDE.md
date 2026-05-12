@@ -1361,3 +1361,43 @@ settings-reduced-effects
 ```
 
 The CSS uses that class to hide particles and reduce animation.
+
+
+## V21 Consolidated Fix Notes
+
+This build includes the current fixes in one place:
+
+- Firebase config supports both `GAME_FIREBASE_CONFIG` and `FIREBASE_GAME_CONFIG`.
+- `cloud_save.js` uses `getFirebaseGameConfig()` consistently.
+- Account sign-in should work after a hard refresh if Firebase Authentication and Firestore are enabled.
+- Trophies page scrolls and does not show the sanity meter.
+- Clear Mind no longer unlocks at the main menu. It unlocks only after sanity drops below 90 and is restored to 90 or higher.
+- Crafting/cooking, inventory, settings, achievements, entity portraits, endings, and unified choices are included.
+
+### Firestore Rules for This Build
+
+This version saves cloud data to `playerSaves/USER_UID`, so use:
+
+```js
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    match /playerSaves/{userId} {
+      allow create, read, update, delete: if isOwner(userId);
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+```

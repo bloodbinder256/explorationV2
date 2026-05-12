@@ -26,6 +26,13 @@
     writeJSON(UNLOCKED_KEY, list);
   }
 
+  function migrateInvalidUnlocks() {
+    const flags = allFlags();
+    const list = unlocked();
+    const filtered = list.filter(t => !(t.id === "clear_mind" && !flags.clear_mind_earned));
+    if (filtered.length !== list.length) saveUnlocked(filtered);
+  }
+
   function stats() {
     return readJSON(STATS_KEY, {
       pickups: 0,
@@ -211,6 +218,7 @@
   window.Trophies = API;
 
   document.addEventListener("DOMContentLoaded", () => {
+    migrateInvalidUnlocks();
     const room = window.location.pathname.split("/").pop();
     if (room && room !== "index.html" && !["account.html", "trophies.html"].includes(room)) {
       API.visitRoom(room);

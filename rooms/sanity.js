@@ -77,6 +77,24 @@
     change(delta, reason) {
       const before = load();
       const after = this.set(before + delta, reason);
+
+      // Clear Mind should not unlock just because the player starts at high sanity.
+      // It only unlocks after sanity was actually lost, then restored high again.
+      if (delta < 0 && after < 90) {
+        localStorage.setItem("clear_mind_was_shaken_v1", "1");
+      }
+
+      if (
+        delta > 0 &&
+        after >= 90 &&
+        localStorage.getItem("clear_mind_was_shaken_v1") === "1"
+      ) {
+        const flags = JSON.parse(localStorage.getItem("content_flags_v1") || "{}");
+        flags.clear_mind_earned = true;
+        localStorage.setItem("content_flags_v1", JSON.stringify(flags));
+        window.Trophies?.checkAll?.();
+      }
+
       return after;
     },
 

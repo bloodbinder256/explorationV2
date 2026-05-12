@@ -79,8 +79,8 @@ window.ACHIEVEMENTS = [
     id: "clear_mind",
     name: "Clear Mind",
     icon: "💠",
-    description: "Reach 90 or more sanity.",
-    condition: { type: "sanity", min: 90 }
+    description: "Restore your sanity after the house has shaken you.",
+    condition: { type: "flag", id: "clear_mind_earned" }
   },
   {
     id: "near_breaking",

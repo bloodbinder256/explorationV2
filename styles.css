@@ -2181,3 +2181,111 @@ body.settings-hide-sanity #sanityBar {
     width: 100%;
   }
 }
+
+
+/* ============================
+   V21 CONSOLIDATED FIXES
+   ============================ */
+html:has(body.trophies-page),
+html:has(body.crafting-page),
+html:has(body.account-page),
+html:has(body.settings-page),
+html:has(body.ending-page),
+body.trophies-page,
+body.crafting-page,
+body.account-page,
+body.settings-page,
+body.ending-page {
+  height: auto !important;
+  min-height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+body.trophies-page #sanityBar {
+  display: none !important;
+}
+
+/* Make buttons behave like their visible pill hitboxes. */
+.btn,
+.dialogue-option,
+.entity-option,
+.mini-btn,
+.station-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .35rem;
+  pointer-events: auto;
+  line-height: 1.2;
+  transform: none !important;
+}
+
+.btn *,
+.dialogue-option *,
+.entity-option *,
+.mini-btn *,
+.station-tab * {
+  pointer-events: none;
+}
+
+.btn:hover,
+.dialogue-option:hover,
+.entity-option:hover,
+.mini-btn:hover,
+.station-tab:hover {
+  transform: none !important;
+}
+
+/* ============================
+   V22 SETTINGS PAGE SCROLL FIX
+   ============================ */
+html:has(body.settings-page) {
+  height: auto !important;
+  min-height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+body.settings-page {
+  position: static !important;
+  height: auto !important;
+  min-height: 100vh !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding: 24px 0 96px !important;
+  display: block !important;
+}
+
+body.settings-page .settings-card {
+  margin-top: 2vh !important;
+  margin-bottom: 8vh !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+body.settings-page .settings-section,
+body.settings-page .settings-actions,
+body.settings-page #saveBox {
+  max-height: none !important;
+}
+
+body.settings-page .vignette,
+body.settings-page .scanlines,
+body.settings-page .grain {
+  position: fixed !important;
+}
+
+@media (max-height: 760px) {
+  body.settings-page .settings-card {
+    margin-top: 12px !important;
+    margin-bottom: 80px !important;
+    padding: 20px !important;
+  }
+
+  body.settings-page .settings-section {
+    margin-top: 12px !important;
+    padding: 14px !important;
+  }
+}
