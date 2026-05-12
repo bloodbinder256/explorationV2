@@ -199,6 +199,7 @@ window.refreshInventoryUI = function () {
     <div class="inventory-list"></div>
 
     <div class="inventory-footer">
+      <button id="mainMenuBtn" class="btn" type="button">Main Menu</button>
       <button id="craftingBtn" class="btn" type="button">Craft / Cook</button>
       <button id="trophiesBtn" class="btn" type="button">Trophies</button>
       <button id="accountBtn" class="btn" type="button">Account</button>
@@ -273,14 +274,22 @@ window.refreshInventoryUI = function () {
     refreshInventoryUI();
   });
 
+
+  invPanel.querySelector("#mainMenuBtn")?.addEventListener("click", () => {
+    const isRoom = window.location.pathname.includes("/rooms/");
+    window.location.href = isRoom ? "../index.html" : "index.html";
+  });
+
   invPanel.querySelector("#craftingBtn")?.addEventListener("click", () => {
     const current = window.location.pathname.split("/").pop();
     if (current !== "crafting.html") localStorage.setItem("lastRoom", current);
-    window.location.href = "crafting.html";
+    const isRoom = window.location.pathname.includes("/rooms/");
+    window.location.href = isRoom ? "crafting.html" : "rooms/crafting.html";
   });
 
   invPanel.querySelector("#trophiesBtn")?.addEventListener("click", () => {
-    window.location.href = "trophies.html";
+    const isRoom = window.location.pathname.includes("/rooms/");
+    window.location.href = isRoom ? "trophies.html" : "rooms/trophies.html";
   });
 
   invPanel.querySelector("#accountBtn")?.addEventListener("click", () => {

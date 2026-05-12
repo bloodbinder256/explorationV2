@@ -1464,3 +1464,30 @@ Players can turn creature gibberish voices on/off in:
 ```txt
 rooms/settings.html
 ```
+
+
+## Cache busting on GitHub Pages
+
+Browsers may cache old JavaScript and CSS on GitHub Pages. This project includes:
+
+```txt
+version.bat
+version.ps1
+```
+
+Double-click `version.bat`, enter a new number like `26`, and it will update local CSS/JS references such as:
+
+```html
+<script src="rooms/script.js?v=26"></script>
+<link rel="stylesheet" href="styles.css?v=26">
+```
+
+Do this before committing a new release so players do not need to hard refresh every page.
+
+## Enemy spawn lock
+
+Enemy attacks are still locked until `GameProgress.enemySpawnsUnlocked()` is true. The current room system unlocks this when the player reaches the deeper house section, such as after using the Silver Key/front door path or entering one of the deeper interior rooms. Non-game screens like Settings, Trophies, Account, Crafting, and Endings should not run random attack logic.
+
+## Inventory Main Menu button
+
+The inventory now includes a `Main Menu` button that returns to `index.html`.
