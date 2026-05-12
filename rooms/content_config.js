@@ -134,7 +134,45 @@ window.ROOM_DIALOGUES = {
       { label: "Press your ear to the wood", response: "You hear a delicate shifting on the other side, like someone deciding whether to leave or enter.", sanity: 0, setFlag: "heard_behind_door" },
       { label: "Laugh once, softly", response: "The sound makes the room feel less in control of you. Not safe—just less certain.", sanity: 1, setFlag: "laughed_at_house" }
     ]
-  }
+  },
+   "entitytest.html": {
+  id: "test",
+  chance: 1,
+  repeats: false,
+  requiresEnemyUnlocked: false,
+
+  name: "Test",
+  image: "../images/entities/placeholder.png",
+  imageAlt: "Describe the creature image",
+  imagePosition: "left",
+  imageFit: "cover",
+
+  subtitle: "A short atmospheric description.",
+  prompt: "What does it want from the player?",
+
+  options: [
+    {
+      label: "Speak gently",
+      response: "The creature relaxes.",
+      sanity: 3,
+      setFlag: "spoke_gently_to_creature"
+    },
+    {
+      label: "Attack",
+      response: "The creature recoils, but the room turns colder.",
+      sanity: -4,
+      setFlag: "attacked_creature",
+      swapImage: "../images/entities/creature_angry.png"
+    }
+   ]
+   voice: {
+  enabled: true,
+  pitch: 1.45,
+  speed: 1.15,
+  volume: 0.45,
+  texture: "soft"
+}
+}
 };
 
 /* ENTITY ENCOUNTERS
